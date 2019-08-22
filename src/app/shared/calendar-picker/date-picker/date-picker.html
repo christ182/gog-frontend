@@ -1,0 +1,59 @@
+<div class="date-picker"
+    ng-class="{
+        'start': vm.calendar === 'start',
+        'end': vm.calendar === 'end'
+        }">
+    <div class="col-xs-6 no-padding">
+        <div class="col-xs-12 no-padding">
+            <table class="table" style="border-right: 1px solid #e9e9e9">
+                <tbody>
+                    <tr ng-repeat="row in vm.months" 
+                        ng-init="rowIndex = $index"
+                        class="text-center">
+                        <td ng-repeat="month in row track by $index"
+                            ng-class="{'is-selected-month': vm.isSelectedMonth(month)}"
+                            ng-click="vm.selectMonth(rowIndex + (!$index ? 0 : 6))">
+                            <span>{{month}}</span>
+                        </td>   
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-xs-12" style="padding-top: 4px">
+            <button class="btn btn-default pull-right"
+                ng-click="vm.ok()">Confirm
+            </button>
+        </div>
+    </div>
+    <div class="col-xs-6 no-padding">
+        <div class="col-xs-12 no-padding">
+            <table class="table" style="border-left: 1px solid #e9e9e9">
+                <tbody>
+                    <tr class="text-center">
+                        <td ng-click="vm.initializeMonths(vm.years[0][0] - 10)">
+                            <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                        </td>
+                        <td ng-click="vm.initializeMonths(vm.years[0][0] + 10)">
+                            <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                        </td>
+                    </tr>
+                    <tr ng-repeat="row in vm.years" 
+                        ng-init="rowIndex = $index" 
+                        class="text-center">
+                        <td ng-repeat="year in row track by $index"
+                            ng-class="{'is-selected-year': year === vm.currentYear}"
+                            ng-click="vm.selectYear(year)">
+                            <span>{{year}}</span>
+                        </td>   
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-xs-12" style="padding-top: 4px">
+            <button class="btn btn-default pull-left"
+                ng-click="vm.cancel()">
+                Cancel
+            </button>
+        </div>
+    </div>
+</div>

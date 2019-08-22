@@ -1,0 +1,115 @@
+<style>
+
+
+    #cloud {
+    overflow: hidden;
+    width: 1px; height: 1px;
+    transform: translate(-100%, -100%);
+    border-radius: 50%;
+    filter: url(#filter);
+    }
+
+    /*Login*/
+    .top-div {
+        clear: both;
+        position: fixed;
+        top: 0;
+        height: 40%;
+        width: 100%;
+        font-size: 16px;
+        text-align: center;
+        z-index: -1;
+    }
+    .sign-in-top {
+        margin-top: 200px;
+    }
+    .form-wall {
+        margin: auto;
+        position: fixed !important;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -60%);
+    }
+
+    .form-signin {
+        /* border: 2px solid #41B3A3; */
+        min-width: 300px;
+        max-width: 400px;
+        padding: 40px;
+        background: var(--main-bg-color)
+    }
+    
+    body {
+        background: var(--main-bg-color)
+    }
+
+    .form-signin input {
+        padding: 20px 8px;
+    }
+    .form-signin .col-md-12 {
+        padding: 5px;
+        margin-bottom: 30px;
+    }
+    .logo {
+        height: 35px;
+        margin-top: 5px;
+    }
+    .login-logo {
+        height: 70px;
+        margin-top: 30px;
+    }
+
+    input {
+        color: #222!important
+    }
+
+</style>
+
+
+<div id="cloud"></div>
+
+<svg width="0">
+  <filter id="filter">
+    <feTurbulence type="fractalNoise"
+      baseFrequency=".01" numOctaves="10" />
+    <feDisplacementMap
+      in="SourceGraphic" scale="240" />
+  </filter>
+</svg>
+
+
+<div class="text-center text-uppercase margin-top">
+    <!-- <h1>Logo</h1> -->
+    
+</div>
+<div class="form-wall">
+    <div class="center sign-in-top">
+        <h4 class="text-uppercase">
+            <!-- <span class="text-uppercase">Sign In</span> -->
+        </h4>
+    </div>
+    <form class="form-signin materialize clearfix" ng-submit="vm.login(user)">
+        <div class="col-md-12 center">
+            <div class="">
+                <!-- <p class="text-theme text-uppercase">Sign In</p> -->
+                <!-- <img src="" class="login-logo" ng-src="{{vm.logo}}" alt=""> -->
+                <!-- <i class="fa fa-user-circle-o fa-5x"></i> -->
+                
+            </div>
+        </div>
+        <div class="col-md-12">
+            <input type="text" class="form-control" name="username" ng-model="user.username" placeholder=" " required>
+            <label for="username" class="md-label">Username</label>
+        </div>
+        <div class="col-md-12">
+            <input type="password" class="form-control" name="password" ng-model="user.password" placeholder=" " required>
+            <label for="password" class="md-label">Password</label>
+        </div>
+        <div class="col-md-12">
+            <button class="btn btn-block btn-lg btn-default theme">Sign in</button>
+        </div>
+        <div class="col-md-12 center margin-top">
+            <a href="" class="text-theme" ng-click="vm.forgot()">Forgot Password</a>
+        </div>
+    </form>
+</div>

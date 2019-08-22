@@ -1,0 +1,95 @@
+.sidebar {
+    height: 100%;
+    background-color: #161817;
+    position: fixed !important;
+    z-index: 1;
+    overflow: auto;
+    width: 250px;
+}
+
+.sidebar-content {
+    list-style: none;
+}
+.sidebar > li > ul {
+    padding: 0;
+}
+.sidebar li:first-child {
+    margin-top: 20px;
+}
+.sidebar .nav li > a {
+    display: block;
+    padding: 13px 15px 13px 19px;
+    text-decoration: none;
+    color: rgb(154, 154, 154);
+    font-size: 13px;
+    font-weight: 500;
+}
+.sidebar-content .active a,
+.sidebar-content .active a,
+.sidebar-content .active a:hover,
+.sidebar-content .active a:focus,
+.sidebar-content .active a:visited {
+    color: #009688 !important;
+    background: #222d32 !important;
+    border-left: solid 1px #009688 !important;
+}
+.sidebar .nav li > a:hover {
+    background: rgb(21, 35, 39) !important;
+    border-left: solid 1px #009688 !important;
+}
+.sidebar.slide-in {
+    transform: translateX(-250px);
+}
+
+.sidebar.slide-out {
+    transform: translateX(0px);
+}
+
+.slide-transition {
+    transition: all 0.4s ease;
+}
+.treeview-menu .nav li:hover,
+.treeview-menu .nav li .active {
+    background: transparent !important;
+}
+.treeview-menu .nav li {
+    padding-left: 10px;
+}
+.treeview-menu .nav {
+    margin-top: -15px;
+}
+.treeview-menu {
+    position: relative;
+    display: none;
+    list-style: none;
+    padding: 5px 0 10px;
+    margin: 0;
+    padding-left: 35px;
+    background-color: #161817;
+    transition: all 0.3s ease;
+    -webkit-transition: all 0.3s ease;
+}
+.treeview-menu:before {
+    width: 2px;
+    bottom: 35px;
+    background: rgba(59, 70, 72, 0.5);
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 33px;
+}
+.treeview-menu li:before {
+    position: absolute;
+    top: 16px;
+    left: -2px;
+    display: block;
+    height: 0.5em;
+    width: 22px;
+    border-bottom: 2px solid #282f2f;
+    border-left: 2px solid #282f2f;
+    border-radius: 0 0 0 0.3em;
+    content: '';
+}
+
+/* @media (min-width:993px){.sidebar.collapse{display:block!important}} */
+/* @media (max-width:992px){.sidebar.collapse{display:none} } */

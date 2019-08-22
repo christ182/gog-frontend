@@ -1,0 +1,16 @@
+<div class="sidebar collapse"
+    ng-class="{'slide-out': vm.sidebarService.isActive, 'slide-in': !vm.sidebarService.isActive, in: '!navCollapsed', 'slide-transition': !vm.sidebarService.first}"
+    style="z-index: 1000">
+    <ul class="nav sidebar-content margin-top-md">
+        <li ui-sref-active="active" class="margin-top" permission permission-only="'canViewDashboard'">
+            <a href="" ui-sref="app.dashboard">
+            <i class="fa fa-tachometer" aria-hidden="true"></i> Dashboard 
+            </a>
+        </li>
+        <li ui-sref-active="active" permission permission-only="'canViewSettings'">
+            <a href="" ui-sref="app.settings">
+                <i class="fa fa-gears" aria-hidden="true"></i> Settings
+            </a>
+        </li>
+    </ul>
+</div>

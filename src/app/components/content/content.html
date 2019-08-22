@@ -1,0 +1,9 @@
+<div class="page-wrapper" ng-class="{'slide-in': !vm.sidebarService.isActive, 'slide-out': vm.sidebarService.isActive, 'slide-transition': !vm.sidebarService.first}">
+    <div class="content-wrapper" >
+        <!-- <div class="header">
+
+        </div> -->
+        <div ui-view class="content"></div>
+        <div style="left:10px;bottom:10px;position:fixed"> &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp{{ vm.version}}</div>
+    </div>
+</div>

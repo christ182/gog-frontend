@@ -1,0 +1,28 @@
+<div class="modal-header theme">
+    <span class="text-uppercase lead">
+        {{ vm.content.header }}
+       <button  type="button" 
+                class="close"
+                ng-click="vm.cancel()" 
+                data-dismiss="modal" 
+                aria-hidden="true">&times;</button>
+    </span>
+
+</div>
+
+<div class="modal-body clearfix">
+    <div class="materialize">
+        
+        <p>{{ vm.content.message }}</p>
+
+        <div class="col-md-12">
+            <input name="email" type="text" class="form-control" placeholder=" " ng-model="vm.email" autofocus />
+            <label for="email" class="md-label">Email</label>
+        </div>
+
+        <div class="top-margin-sm pull-right" align="center">
+            <button type="button" class="btn btn-sm btn-cancel" ng-click="vm.cancel()"> Cancel </button>
+            <button type="button" class="btn btn-sm btn-primary text-capitalize" ng-click="vm.approve()"> {{vm.content.btn_name || 'Send'}} </button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,9 @@
+<ul uib-pagination total-items="vm.pageData.total" ng-model="vm.pageData.page" items-per-page="vm.pageData.size" max-size="5"
+    ng-change="vm.onPageChange()" class="pagination-sm" boundary-links="true" rotate="false" previous-text="&lsaquo;" next-text="&rsaquo;"
+    first-text="&laquo;" last-text="&raquo;">
+</ul>
+<div class="btn-group pull-right" style="margin-top: 10px; height: 30px;">
+    <label class="btn btn-default" ng-model="vm.pageData.size" uib-btn-radio="10" ng-click="vm.onSizeChange()">10</label>
+    <label class="btn btn-default" ng-model="vm.pageData.size" uib-btn-radio="15" ng-click="vm.onSizeChange()">15</label>
+    <label class="btn btn-default" ng-model="vm.pageData.size" uib-btn-radio="20" ng-click="vm.onSizeChange()">20</label>
+</div>

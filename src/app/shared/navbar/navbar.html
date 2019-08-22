@@ -1,0 +1,131 @@
+<style>
+    .navbar-header {
+        height: 50px;
+    }
+
+    .navbar-brand {
+        padding: 8px 0px;
+    }
+
+    .nav .open > a,
+    .nav .open > a:hover,
+    .nav .open > a:focus,
+    .nav > li > a:hover,
+    .nav > li > a:focus {
+        background: transparent !important;
+        cursor: pointer;
+    }
+    .navbar-brand {
+        padding: 5px !important;
+        margin-top: 4px;
+    }
+    .navbar .navbar-brand img {
+        height: 53px;
+        margin-left: 10px;
+        /* background: #fff; */
+        border-radius: 5px;
+        padding: 5px !important;
+    }
+
+    #holder p:hover {
+        color: #b2dbfb;
+    }
+
+    #holder img {
+        float: left;
+    }
+
+    .top-nav {
+        padding: 5px 20px !important;
+    }
+
+    .top-nav > li {
+        float: left;
+    }
+
+    .top-nav > li > a {
+        padding-top: 25px;
+        /*padding-bottom: 15px;*/
+        line-height: 20px;
+        color: rgba(115, 115, 115, 0.86)!important;
+    }
+
+    .top-nav > .open > .dropdown-menu > li > a {
+        white-space: normal;
+        padding: 10px;
+    }
+    .navbar {
+        height: 80px !important;
+        min-height: 80px !important;
+        margin-bottom: 0px;
+        background: var(--white);
+        /* margin-bottom: 170px; */
+    }
+    .nav .open > a,
+    .nav .open > a:hover,
+    .nav .open > a:focus {
+        background: transparent;
+    }
+    .nav > li > a:hover,
+    .nav > li > a:focus {
+        background: transparent;
+    }
+
+    .navbar-fixed-top {
+        /* border-width: 0 0 0px !important; */
+        margin: 30px;
+        border: solid 2px var(--main-bg-color)
+    }
+    @media (max-width: 767px) {
+        .top-nav {
+            position: absolute;
+            right: 3px;
+            top: 0;
+        }
+        .dropdown-menu {
+            left: -108px !important;
+        }
+    }
+
+</style>
+<nav class="navbar navbar-fixed-top main-nav" role="navigation">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+       
+         <a class="navbar-brand" id="holder">
+            <!-- <img ng-src="{{vm.logo}}"> -->
+        </a> 
+         <!-- <a class="text-white" style="margin-top: 10px; float: left; margin-left: 20px" ng-click="vm.toggleSidebar()">
+            <i class="fa fa-bars fa-2x"  aria-hidden="true"></i>
+        </a> -->
+    </div>
+    <!-- Top Menu Items -->
+    <ul class="nav navbar-right top-nav ">
+        <li class="dropdown" uib-dropdown on-toggle="toggled(open)">
+            <a class="dropdown-toggle text-white" uib-dropdown-toggle>
+                <i class="fa fa-user"></i>
+                <b class="caret"></b>
+            </a>
+            <ul class="dropdown-menu">
+                <li>
+                    <a ng-click="vm.view_profile()">
+                    <i class="fa fa-user"></i>
+                    My Account
+                </a>
+                </li>
+                <li>
+                    <a ng-click="vm.update_password()">
+                    <i class="fa fa-lock"></i>
+                    Change Password
+                </a>
+                </li>
+                <li>
+                    <a ng-click="vm.logout()">
+                    <i class="fa fa-power-off"></i>
+                    Sign Out
+                </a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</nav>

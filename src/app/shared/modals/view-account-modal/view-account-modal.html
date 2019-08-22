@@ -1,0 +1,44 @@
+<div class="modal-header bg-primary">
+    <span class="text-uppercase lead">
+        {{ vm.header }}
+       <button  type="button" 
+                class="close"
+                ng-click="vm.cancel()" 
+                data-dismiss="modal" 
+                aria-hidden="true">&times;</button>
+    </span>
+
+</div>
+ 
+<div class="modal-body clearfix">
+
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label for="inputName" class="col-sm-2">Name</label>
+                <div class="col-sm-10">
+                    {{vm.user.fullName}}
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputName" class="col-sm-2">Phone Number</label>
+                <div class="col-sm-10">
+                    {{vm.user.phoneNumber}}
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail" class="col-sm-2">Email</label>
+                <div class="col-sm-10">
+                    {{vm.user.email}}
+                </div>
+            </div>
+        </form>
+
+    <div class="top-margin-sm pull-right" align="center">
+        <button type="button" 
+                class="btn btn-sm btn-cancel" 
+                ng-click="vm.cancel()" > {{vm.cancel_button_label}} </button>
+        <button type="button"
+                class="btn btn-sm btn-primary text-capitalize"
+                ng-click="vm.approve()" > {{vm.update_button_label}} </button>
+    </div>
+</div>

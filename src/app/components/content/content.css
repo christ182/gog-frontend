@@ -1,0 +1,11 @@
+.page-wrapper.slide-in {
+    padding-left: 0;
+}
+
+.page-wrapper.slide-out {
+    padding-left: 250px;
+}
+
+/*.page-wrapper {
+    background-color: #757575;
+}*/
