@@ -1,6 +1,11 @@
 
 <div class="content-view">
-    <div>
+    <div class="col-md-4" ng-if="vm.socket_user.status === '~'">
+        <div ng-if="vm.user.id !== user.id" class="col-md-12" ng-repeat="user in vm.users track by user.id">
+            <span style="margin:5px;float:left">{{user.name}}</span>
+            <span style="margin:5px;float:left">{{user.status}}</span>
+            <button class="btn" ng-disabled="user.status === 'playing'" style="margin:5px;float:left" ng-click="vm.send_challenge(user.id)">Invite</button>
+        </div>
     </div>
 </div>
 
