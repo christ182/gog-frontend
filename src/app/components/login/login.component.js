@@ -53,6 +53,8 @@ import ROLES from 'Helpers/permissions';
         vm.login = login;
         vm.forgot = forgot;
 
+        vm.user = {};
+
         function login(user) {
             user.type = 'user';
             var req = {
@@ -71,7 +73,6 @@ import ROLES from 'Helpers/permissions';
                 .then(function(response) {
                     var data = response.data.data;
                     // var data = response.data.data.items[0];
-                    console.log(data);
 
                     // Store this data somewhere for future use
                     SessionService.saveUser(data);
@@ -153,36 +154,5 @@ import ROLES from 'Helpers/permissions';
             };
             ModalService.prompt_modal(content);
         }
-
-        //clouds
-        function rn(from, to) {
-            return ~~(Math.random() * (to - from + 1)) + from;
-        }
-
-        function rs() {
-            return arguments[rn(1, arguments.length) - 1];
-        }
-
-        function boxShadows(max) {
-            let ret = [];
-            for (let i = 0; i < max; ++i) {
-                ret.push(`
-                ${rn(1, 100)}vw ${rn(1, 100)}vh ${rn(20, 40)}vmin ${rn(
-                    1,
-                    20
-                )}vmin
-                ${rs('#11cbd7', '#c6f1e7', '#fff4b5', '#fabb46')}
-                `);
-                // ${rs('#666', '#444', '#222', '#333', '#555')}
-            }
-            return ret.join(',');
-        }
-
-        const cloud = document.querySelector('#cloud');
-        function update() {
-            cloud.style.boxShadow = boxShadows(100);
-        }
-
-        // update();
     }
 })();

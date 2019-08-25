@@ -1,5 +1,45 @@
+<style>
+    .unplaced_piece{
+        width: 120px;
+        height: 50px;
+        text-align: center;
+        border: solid 1px !important;
+        float: left;
+        margin: 5px;
+    }
+
+    .piece_black{
+        background: #555 !important;
+        color: #ddd !important;
+    }
+    .piece_white{
+        background: #ddd !important;
+        color: #555 !important;
+    }
+
+    .tile{
+        width: 160px;
+        height: 80px;
+        border: solid 1px!important;
+        margin: 2px;
+    }
+
+    .white_tile{
+        background: #fff;
+    }
+    .black_tile{
+        background: #aaa!important;
+    }
+    .green_tile{
+        background: #afa!important;
+    }
+    .selected_piece{
+        background: #afa;
+    }
+</style>
 
 <div class="content-view">
+    <!-- lobby -->
     <div class="col-md-4" ng-if="vm.socket_user.status === '~'">
         <div ng-if="vm.user.id !== user.id" class="col-md-12" ng-repeat="user in vm.users track by user.id">
             <span style="margin:5px;float:left">{{user.name}}</span>
@@ -7,5 +47,59 @@
             <button class="btn" ng-disabled="user.status === 'playing'" style="margin:5px;float:left" ng-click="vm.send_challenge(user.id)">Invite</button>
         </div>
     </div>
-</div>
 
+    <div class="col-md-12" ng-if="vm.socket_user.status === 'playing'">
+        <div ng-if="vm.game.status === 'setup'">
+            <h3>Playing against {{vm.game.enemy.name}} - Ready? {{vm.game.enemy.ready}}</h3>
+            <button 
+                ng-class="piece == vm.to_place?'selected_piece':piece.color==='white'?'piece_white':'piece_black'" 
+                ng-click="vm.to_place = piece" 
+                class="btn unplaced_piece" 
+                ng-repeat="piece in vm.game.user.unplaced_pieces"
+            >
+                {{piece.name}}<br />
+                <span class="{{icon}}" ng-repeat="icon in piece.icons track by $index" ></span>
+            </button>
+            <button ng-click="vm.clear_setup()">Clear Setup</button>
+            <button ng-click="vm.setup_random_test()">Setup Random</button>
+            <button ng-click="vm.ready()" ng-if="vm.game.user.unplaced_pieces.length === 0">I am ready</button>
+        </div>
+
+        <!-- board setup -->
+
+        <div class="col-md-12" ng-if="vm.game.status === 'setup'">
+            <div class="row" ng-repeat="rows in vm.game.board">
+                <button ng-click="vm.place_piece(tile.x, tile.y)" class="btn tile" ng-class="tile.y>=4? 'white_tile': 'black_tile'" ng-repeat="tile in rows track by $index">
+                    <span ng-if="!tile.piece">({{tile.x}},{{tile.y}})</span>
+                    <div
+                        ng-if="tile.piece"
+                        ng-class="vm.get_piece_color(tile.piece)?'piece_white':'piece_black'" 
+                        class="btn unplaced_piece" 
+                    >
+                        {{tile.piece.name}}<br />
+                        <span class="{{icon}}" ng-repeat="icon in tile.piece.icons track by $index" ></span>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- board ongoing -->
+
+        <div class="col-md-12" ng-if="vm.game.status === 'ongoing'">
+            {{ vm.game.turn }}'s turn
+            <div class="row" ng-repeat="rows in vm.game.board">
+                <button ng-click="vm.click_move(tile)" class="btn tile" ng-class="tile===vm.to_move?'green_tile':tile.y>=4? 'white_tile': 'black_tile'" ng-repeat="tile in rows track by $index">
+                    <span ng-if="!tile.piece">({{tile.x}},{{tile.y}})</span>
+                    <div
+                        ng-if="tile.piece"
+                        ng-class="vm.get_piece_color(tile.piece)?'piece_white':'piece_black'" 
+                        class="btn unplaced_piece" 
+                    >
+                        {{tile.piece.name}}<br />
+                        <span class="{{icon}}" ng-repeat="icon in tile.piece.icons track by $index" ></span>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
