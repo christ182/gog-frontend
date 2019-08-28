@@ -78,7 +78,7 @@
                     >
                         {{tile.piece.name}}<br />
                         <span class="{{icon}}" ng-repeat="icon in tile.piece.icons track by $index" ></span>
-                    </div>
+                    </div>                    
                 </button>
             </div>
         </div>
@@ -98,6 +98,14 @@
                         {{tile.piece.name}}<br />
                         <span class="{{icon}}" ng-repeat="icon in tile.piece.icons track by $index" ></span>
                     </div>
+                    <div
+                        ng-if="vm.game.last_move.ox == tile.x && vm.game.last_move.oy == tile.y"
+                        class="btn unplaced_piece" 
+                        style="position: absolute; margin-left:-76px; margin-top:-15px; background: rgba(139, 94, 94,0.4);color:black"
+                    >
+                        <span ng-class="vm.last_move_direction()"></span>
+                    </div>
+
                 </button>
             </div>
         </div>

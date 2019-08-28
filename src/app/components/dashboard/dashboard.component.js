@@ -37,6 +37,7 @@ import angular from 'angular';
         vm.get_piece_color = get_piece_color;
         vm.clear_setup = clear_setup;
         vm.ready = ready;
+        vm.last_move_direction = last_move_direction;
         vm.click_move = click_move;
 
         vm.user = $cookies.getObject('user');
@@ -280,6 +281,30 @@ import angular from 'angular';
             );
         }
 
+        function last_move_direction() {
+            const move = vm.game.last_move;
+
+            if (!move) {
+                return '';
+            }
+            const dx = move.ox - move.nx;
+            const dy = move.oy - move.ny;
+
+            if (dx < 0 && dy == 0) {
+                return 'fa fa-chevron-right';
+            }
+            if (dx > 0 && dy == 0) {
+                return 'fa fa-chevron-left';
+            }
+
+            if (dx == 0 && dy > 0) {
+                return 'fa fa-chevron-up';
+            }
+            if (dx == 0 && dy < 0) {
+                return 'fa fa-chevron-down';
+            }
+        }
+
         // -----------------------socket events-------------------------------------
         SocketService.on('new_user', data => {
             console.log('new_user', data);
@@ -360,6 +385,12 @@ import angular from 'angular';
 
             // vm.game.board[data.ny][data.nx].piece = undefined;
             vm.game.board[data.ny][data.nx].piece_id = undefined;
+            vm.game.last_move = {
+                ox: data.ox,
+                oy: data.oy,
+                nx: data.nx,
+                ny: data.ny
+            };
 
             if (data.remove) {
                 data.remove.forEach(piece_id => {
