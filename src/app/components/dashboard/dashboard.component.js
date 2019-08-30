@@ -42,8 +42,6 @@ import angular from 'angular';
 
         vm.user = $cookies.getObject('user');
 
-        get_online();
-
         function get_online() {
             var request = {
                 method: 'GET',
@@ -306,6 +304,12 @@ import angular from 'angular';
         }
 
         // -----------------------socket events-------------------------------------
+        SocketService.on('game', data => {
+            get_online();
+            vm.game = data;
+            refresh_board();
+        });
+
         SocketService.on('new_user', data => {
             console.log('new_user', data);
             vm.users.push(data);
