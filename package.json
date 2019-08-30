@@ -1,6 +1,6 @@
 {
   "name": "cdi-web-app",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "## Introduction",
   "main": "index.js",
   "scripts": {
