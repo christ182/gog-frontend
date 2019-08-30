@@ -382,9 +382,11 @@ import angular from 'angular';
             console.log(data);
             // vm.game.board[data.oy][data.ox].piece = undefined;
             vm.game.board[data.oy][data.ox].piece_id = undefined;
+            vm.game.board[data.oy][data.ox].piece = undefined;
 
             // vm.game.board[data.ny][data.nx].piece = undefined;
             vm.game.board[data.ny][data.nx].piece_id = undefined;
+            vm.game.board[data.ny][data.nx].piece = undefined;
             vm.game.last_move = {
                 ox: data.ox,
                 oy: data.oy,
@@ -394,6 +396,12 @@ import angular from 'angular';
 
             if (data.remove) {
                 data.remove.forEach(piece_id => {
+                    if (vm.game.grave_yard) {
+                        vm.game.grave_yard.push(
+                            vm.game.pieces.find(p => p.id == piece_id)
+                        );
+                    }
+
                     vm.game.pieces = vm.game.pieces.filter(
                         p => p.id !== piece_id
                     );
