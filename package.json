@@ -16,9 +16,19 @@
 		"start": "react-scripts start",
 		"build": "react-scripts build",
 		"test": "react-scripts test",
-		"eject": "react-scripts eject",
-		"precommit": "eslint --fix src/**/*.js",
-		"prepush": "eslint --fix src/**/*.js"
+		"eject": "react-scripts eject"
+	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "lint-staged"
+		}
+	},
+	"lint-staged": {
+		"src/**/*.{js,jsx,ts,tsx,json,css}": [
+			"prettier --write",
+			"eslint --fix src/",
+			"git add"
+		]
 	},
 	"eslintConfig": {
 		"extends": "react-app"
@@ -45,6 +55,7 @@
 		"eslint-plugin-react-hooks": "^2.0.1",
 		"eslint-plugin-sort-imports-es6-autofix": "^0.4.0",
 		"husky": "^3.0.5",
+		"lint-staged": "^9.2.5",
 		"prettier": "^1.18.2"
 	}
 }
