@@ -304,6 +304,7 @@ import angular from 'angular';
         }
 
         // -----------------------socket events-------------------------------------
+        get_online();
         SocketService.on('game', data => {
             get_online();
             vm.game = data;
