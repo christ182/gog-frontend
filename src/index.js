@@ -1,10 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import { BrowserRouter as Router } from 'react-router-dom';
+import 'normalize.css/normalize.css';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+import App from 'containers/App';
+import GlobalStyle from 'containers/styles';
+import * as serviceWorker from './serviceWorker';
+import { AuthProvider } from 'components/AuthContext';
+
+ReactDOM.render(
+  <Router>
+    <AuthProvider>
+      <GlobalStyle />
+      <App />
+    </AuthProvider>
+  </Router>,
+  document.getElementById('root')
+);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
