@@ -17,6 +17,7 @@ Code Disruptors, Inc frontend boilerplate created on top of create-react-app. In
     - [Variables](#variables)
 - [Import Rules](#import-rules)
 - [Export Rules](#export-rules)
+- [Setup with Redux]()
 
 ### Requirements
 - node
@@ -149,4 +150,33 @@ const account_groups = [];
 const user_role = {};
 let is_authenticated = false;
 
+```
+### Import Rules
+Add a space between internal and external (from libraries) imports. Order of file imports will be handled by lint automatically.
+```
+// imports from libraries
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
+import 'normalize.css/normalize.css';
+
+//import from internal files
+import App from 'containers/App';
+import GlobalStyle from 'containers/styles';
+import { AuthProvider } from 'components/AuthContext';
+import * as serviceWorker from './serviceWorker';
+
+```
+### Export Rules
+Always put your exports on the bottom
+```
+const Dashboard = () => {
+  return (
+    <div>
+      <h1>Hello, Disruptor</h1>
+    </div>
+  );
+};
+
+export default Dashboard
 ```
