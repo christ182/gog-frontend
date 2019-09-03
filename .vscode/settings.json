@@ -1,0 +1,20 @@
+{
+  "editor.formatOnSave": true,
+  "eslint.autoFixOnSave": true,
+  "files.exclude": {
+    "**/.git": true,
+    // "**/.gitignore": true
+    // "**/.prettierrc": true,
+    "**/.editorconfig": true,
+    "**/jsconfig.json": true,
+    "**/.prettierignore": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/.eslintrc.js": true,
+    "**/.eslintignore": true,
+    "**/node_modules": true,
+    "**/.vscode": true
+  }
+}

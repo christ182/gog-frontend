@@ -5,17 +5,17 @@ import 'normalize.css/normalize.css';
 
 import App from 'containers/App';
 import GlobalStyle from 'containers/styles';
-import * as serviceWorker from './serviceWorker';
 import { AuthProvider } from 'components/AuthContext';
+import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
   <Router>
+    <GlobalStyle />
     <AuthProvider>
-      <GlobalStyle />
       <App />
     </AuthProvider>
   </Router>,
-  document.getElementById('root')
+  document.getElementById('root'),
 );
 
 // If you want your app to work offline and load faster, you can change

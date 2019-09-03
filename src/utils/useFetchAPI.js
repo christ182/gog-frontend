@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
 import useApiService from './useApiService';
+import { useEffect, useState } from 'react';
 
 const useFetchApi = (url, initState) => {
   const { get } = useApiService();

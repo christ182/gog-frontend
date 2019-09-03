@@ -1,10 +1,10 @@
 import React, { Fragment, useContext } from 'react';
 import { NavLink } from 'react-router-dom';
 
-import { AuthContext } from 'components/AuthContext';
 import AppRouter from 'components/AppRouter';
 import privateRoutes from 'routes/privateRoutes';
-import { Nav, NavList, NavItem } from 'components/styledComponents/Nav';
+import { AuthContext } from 'components/AuthContext';
+import { Nav, NavItem, NavList } from 'components/styledComponents/Nav';
 import { StyledPadded } from 'components/styledComponents/Containers';
 
 const Main = () => {

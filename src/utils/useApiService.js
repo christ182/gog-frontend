@@ -24,7 +24,7 @@ const handleError = error => {
 const useApi = () => {
   let service = axios.create({
     baseURL: url,
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
   });
   service.interceptors.response.use(handleSuccess, handleError);
 
@@ -45,7 +45,7 @@ const useApi = () => {
     get,
     post,
     put,
-    remove
+    remove,
   };
 };
 

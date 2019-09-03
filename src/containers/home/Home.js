@@ -10,7 +10,7 @@ const Home = () => {
   const { signIn } = useContext(AuthContext);
   const dummy_user = {
     email: 'eve.holt@reqres.in',
-    password: 'cityslicka'
+    password: 'cityslicka',
   };
 
   return (

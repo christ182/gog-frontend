@@ -6,14 +6,14 @@ const privateRoutes = [
     name: 'Dashboard',
     path: '/dashboard',
     exact: true,
-    component: lazy(() => import('containers/dashboard/Dashboard'))
+    component: lazy(() => import('containers/dashboard/Dashboard')),
   },
   {
     name: 'Users',
     path: '/users',
     exact: true,
-    component: lazy(() => import('containers/users/Users'))
-  }
+    component: lazy(() => import('containers/users/Users')),
+  },
 ];
 
 export default privateRoutes;

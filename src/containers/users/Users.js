@@ -7,7 +7,7 @@ const Users = () => {
   const [state] = useFetchAPI('/users', {
     data: [],
     isLoading: false,
-    hasError: false
+    hasError: false,
   });
 
   const { data, isLoading, hasError } = state;

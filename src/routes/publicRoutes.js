@@ -6,8 +6,8 @@ const publicRoutes = [
     name: 'Home',
     path: '/home',
     exact: true,
-    component: lazy(() => import('containers/home/Home'))
-  }
+    component: lazy(() => import('containers/home/Home')),
+  },
 ];
 
 export default publicRoutes;

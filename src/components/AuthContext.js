@@ -16,7 +16,7 @@ const Auth = props => {
   const value = {
     signIn: signIn,
     signOut: signOut,
-    is_authenticated: is_authenticated
+    is_authenticated: is_authenticated,
   };
 
   function signIn(body) {

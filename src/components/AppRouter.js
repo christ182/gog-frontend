@@ -31,7 +31,7 @@ const AppRouter = ({ routes }) => {
               exact={route.exact === undefined ? false : route.exact}
             />
           )
-        )
+        ),
       )}
       {<Route component={defaultPage} />}
     </Switch>
