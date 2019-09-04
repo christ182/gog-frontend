@@ -17,7 +17,8 @@ Code Disruptors, Inc frontend boilerplate created on top of create-react-app. In
     - [Variables](#variables)
 - [Import Rules](#import-rules)
 - [Export Rules](#export-rules)
-- [Setup with Redux]()
+- [Component Structure](#component-structure)
+- [Core Setup + Redux](#redux-setup)
 
 ### Requirements
 - node
@@ -87,6 +88,8 @@ src/
     └── useFetchAPI.js
 
 ```
+
+
 ### Naming Conventions
 These naming conventions should be strictly followed for consistency across all developers
 
@@ -180,3 +183,71 @@ const Dashboard = () => {
 
 export default Dashboard
 ```
+### Component Structure
+The ordering of component should be: 
+1. imports
+2. hooks
+3. jsx
+4. proptypes
+5. export
+
+```
+// imports from libraries
+import PropTypes from 'prop-types';
+import React, { useContext } from 'react';
+import { Redirect, Route, Switch } from 'react-router-dom';
+
+// internal imports
+import { AuthContext } from 'components/AuthContext';
+
+// Component
+const AppRouter = ({ routes }) => {
+//	hooks
+  const { is_authenticated } = useContext(AuthContext);
+  const defaultPage = () => {
+    return is_authenticated === true ? (
+      <Redirect to="/dashboard" />
+    ) : (
+      <Redirect to="/home" />
+    );
+  };
+
+// jsx
+  return (
+    <Switch>
+      {routes.map((route, index) =>
+        route.component ? (
+          <Route
+            key={index}
+            path={route.path}
+            component={route.component}
+            exact={route.exact === undefined ? false : route.exact}
+          />
+        ) : (
+          route.render && (
+            <Route
+              key={index}
+              path={route.path}
+              render={route.render}
+              exact={route.exact === undefined ? false : route.exact}
+            />
+          )
+        ),
+      )}
+      {<Route component={defaultPage} />}
+    </Switch>
+  );
+};
+
+// proptypes
+AppRouter.propTypes = {
+  routes: PropTypes.array.isRequired,
+};
+
+// export
+export default AppRouter;
+
+```
+### Core Setup + Redux
+> coming soon...
+
