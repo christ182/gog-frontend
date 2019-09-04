@@ -1,7 +1,7 @@
+import 'normalize.css/normalize.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
-import 'normalize.css/normalize.css';
 
 import App from 'containers/App';
 import GlobalStyle from 'containers/styles';

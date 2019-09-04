@@ -41,7 +41,7 @@ module.exports = {
       {
         ignoreCase: false,
         ignoreMemberSort: false,
-        memberSyntaxSortOrder: ['single', 'multiple', 'all', 'none'],
+        memberSyntaxSortOrder: ['none', 'single', 'multiple', 'all'],
       },
     ],
   },

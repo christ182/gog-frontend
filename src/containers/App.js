@@ -2,8 +2,6 @@ import React, { Suspense, lazy, useContext } from 'react';
 
 import AppRouter from 'components/AppRouter';
 import ErrorBoundary from 'components/ErrorBoundary';
-
-// import privateRoutes from 'routes/privateRoutes';
 import publicRoutes from 'routes/publicRoutes';
 import { AuthContext } from 'components/AuthContext';
 
@@ -24,7 +22,6 @@ const App = () => {
           // insert private routes
           <Main />
         ) : (
-          // <AppRouter routes={privateRoutes} />
           // insert public routes
           <AppRouter routes={publicRoutes} />
         )}

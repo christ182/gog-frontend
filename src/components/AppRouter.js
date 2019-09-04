@@ -1,6 +1,8 @@
+import PropTypes from 'prop-types';
 import React, { useContext } from 'react';
-import { AuthContext } from 'components/AuthContext';
 import { Redirect, Route, Switch } from 'react-router-dom';
+
+import { AuthContext } from 'components/AuthContext';
 
 const AppRouter = ({ routes }) => {
   const { is_authenticated } = useContext(AuthContext);
@@ -36,6 +38,10 @@ const AppRouter = ({ routes }) => {
       {<Route component={defaultPage} />}
     </Switch>
   );
+};
+
+AppRouter.propTypes = {
+  routes: PropTypes.array.isRequired,
 };
 
 export default AppRouter;

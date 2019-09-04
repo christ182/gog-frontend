@@ -1,18 +1,26 @@
+import { useEffect, useReducer } from 'react';
+
 import useApiService from './useApiService';
-import { useEffect, useState } from 'react';
 
 const useFetchApi = (url, initState) => {
   const { get } = useApiService();
-  const [state, setState] = useState(initState);
+  const [state, setState] = useReducer(
+    (state, newState) => ({
+      ...state,
+      ...newState,
+    }),
+    initState,
+  );
 
   useEffect(() => {
     const fetchData = async () => {
-      setState({ ...initState, isLoading: true });
+      setState({ isLoading: true });
       try {
         const result = await get(url);
         setState({ data: result.data, isLoading: false, hasError: false });
       } catch (error) {
-        setState({ ...initState, hasError: true });
+        setState({ hasError: true });
+        console.log(error);
       }
     };
     fetchData();
