@@ -67,7 +67,7 @@
 
         <!-- board setup -->
 
-        <div class="col-md-12" ng-if="vm.game.status === 'setup'">
+        <div class="col-md-10" ng-if="vm.game.status === 'setup'">
             <div class="row" ng-repeat="rows in vm.game.board">
                 <button ng-click="vm.place_piece(tile.x, tile.y)" class="btn tile" ng-class="tile.y>=4? 'white_tile': 'black_tile'" ng-repeat="tile in rows track by $index">
                     <span ng-if="!tile.piece">({{tile.x}},{{tile.y}})</span>
@@ -85,7 +85,7 @@
 
         <!-- board ongoing -->
 
-        <div class="col-md-12" ng-if="vm.game.status === 'ongoing'">
+        <div class="col-md-10" ng-if="vm.game.status === 'ongoing'">
             {{ vm.game.turn }}'s turn
             <div class="row" ng-repeat="rows in vm.game.board">
                 <button ng-click="vm.click_move(tile)" class="btn tile" ng-class="tile===vm.to_move?'green_tile':tile.y>=4? 'white_tile': 'black_tile'" ng-repeat="tile in rows track by $index">
@@ -108,6 +108,12 @@
 
                 </button>
             </div>
+        </div>
+        <div class="col-md-2">
+
+            <div ng-repeat="chat in vm.game.chat">{{ chat.message }}</div>
+            <input ng-model="vm.chat" /><button ng-click="vm.send_chat()">Send Chat</button>
+
         </div>
     </div>
 </div>

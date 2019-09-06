@@ -39,6 +39,7 @@ import angular from 'angular';
         vm.ready = ready;
         vm.last_move_direction = last_move_direction;
         vm.click_move = click_move;
+        vm.send_chat = send_chat;
 
         vm.user = $cookies.getObject('user');
 
@@ -242,6 +243,24 @@ import angular from 'angular';
             );
         }
 
+        function send_chat() {
+            var request = {
+                method: 'POST',
+                body: { message: vm.chat },
+                route: { game: 'chat' },
+                cache_string: ''
+            };
+
+            QueryService.query(request).then(
+                function(response) {
+                    vm.chat = undefined;
+                },
+                function(err) {
+                    logger.error(err.message, '');
+                }
+            );
+        }
+
         function click_move(tile) {
             if (!tile.piece && !vm.to_move) {
                 return;
@@ -309,6 +328,10 @@ import angular from 'angular';
             get_online();
             vm.game = data;
             refresh_board();
+        });
+
+        SocketService.on('chat', data => {
+            vm.game.chat.push(data.data);
         });
 
         SocketService.on('new_user', data => {
