@@ -20,16 +20,24 @@ const handleError = error => {
     return error.message;
   }
 };
-
-const useApi = () => {
+const ApiService = () => {
   let service = axios.create({
     baseURL: url,
     'Content-Type': 'application/json',
+    headers: {
+      'x-access-token': localStorage.user
+        ? JSON.parse(localStorage.user).token
+        : '',
+    },
   });
+
   service.interceptors.response.use(handleSuccess, handleError);
 
   const get = (path, params) => {
     return service.get(path, params);
+  };
+  const getAll = (cb, params) => {
+    return axios.all([cb], params);
   };
   const post = (path, body) => {
     return service.post(path, body);
@@ -43,10 +51,11 @@ const useApi = () => {
 
   return {
     get,
+    getAll,
     post,
     put,
     remove,
   };
 };
 
-export default useApi;
+export default ApiService;

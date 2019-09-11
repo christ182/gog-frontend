@@ -1,5 +1,5 @@
+import ApiService from 'utils/ApiService';
 import React, { createContext, useState } from 'react';
-import useAPI from 'utils/useApiService';
 import { withRouter } from 'react-router-dom';
 
 const AuthContext = createContext();
@@ -11,7 +11,7 @@ const Auth = props => {
     ? JSON.parse(localStorage.is_authenticated)
     : false;
   const [is_authenticated, setAuthValue] = useState(auth);
-  const { post } = useAPI();
+  const { post } = ApiService();
 
   const value = {
     signIn: signIn,
@@ -20,11 +20,10 @@ const Auth = props => {
   };
 
   function signIn(body) {
-    // replace this with the app's proper authentication
-    post('/login', body)
+    post('/auth/sign-in', body)
       .then(res => {
         localStorage.setItem('is_authenticated', true);
-        localStorage.setItem('token', res.token);
+        localStorage.setItem('user', JSON.stringify(res.data));
         setAuthValue(true);
         props.history.push('/main');
       })
@@ -34,8 +33,6 @@ const Auth = props => {
   }
 
   function signOut() {
-    // replace this with the app's proper authentication
-    // localStorage.removeItem('is_authenticated');
     localStorage.clear();
     props.history.push('/home');
     setAuthValue(false);

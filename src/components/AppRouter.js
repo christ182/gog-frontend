@@ -8,7 +8,7 @@ const AppRouter = ({ routes }) => {
   const { is_authenticated } = useContext(AuthContext);
   const defaultPage = () => {
     return is_authenticated === true ? (
-      <Redirect to="/dashboard" />
+      <Redirect to="/game-of-the-generals" />
     ) : (
       <Redirect to="/home" />
     );

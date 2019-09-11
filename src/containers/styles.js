@@ -1,10 +1,8 @@
 import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyle = createGlobalStyle`
-	 @import url(http://fonts.googleapis.com/css?family=Roboto:400,100,300,500,700,900);
 	:root {
-    --font-size: 14px;
-    --font-family: 'Roboto', 'sans-serif';
+    --font-size: 16px;
     --padding: 8px;
 		--margin: 8px;
 		--text-primary:#333;
@@ -14,9 +12,10 @@ const GlobalStyle = createGlobalStyle`
   body {
 		color:var(--text-primary);
 		font-weight:300;
-		font-family:  var(--font-family);
 		padding:0;
 		margin:0;
+		background:#00bcd4;
+		font-size:var(--font-size)
 	}
 	button{
 		font-weight:300;

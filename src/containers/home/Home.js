@@ -1,23 +1,57 @@
 import React, { useContext } from 'react';
+import { Button, Col, Form } from 'react-bootstrap';
 
+import useForm from 'utils/useForm';
 import { AuthContext } from 'components/AuthContext';
-import { BtnPrimary } from 'components/styledComponents/Buttons';
-import { StyledCentered } from 'components/styledComponents/Containers';
+import { StyledHeader } from 'components/styledComponents/Typography';
+import { StyledLoginContainer } from 'components/styledComponents/Containers';
 
-// this component is for illustration only.
-// replace this with app's public routes
+const initState = {
+  username: '',
+  password: '',
+};
 const Home = () => {
   const { signIn } = useContext(AuthContext);
-  const dummy_user = {
-    email: 'eve.holt@reqres.in',
-    password: 'cityslicka',
-  };
+
+  const { handleChange, handleSubmit, values } = useForm(callSignIn, initState);
+
+  function callSignIn() {
+    signIn(values);
+  }
 
   return (
-    <StyledCentered>
-      <h2>Code Disruptors, Inc</h2>
-      <BtnPrimary onClick={() => signIn(dummy_user)}>Sign In</BtnPrimary>
-    </StyledCentered>
+    <StyledLoginContainer>
+      <Form onSubmit={handleSubmit}>
+        <StyledHeader>Game of the Generals</StyledHeader>
+        <Col>
+          <Form.Control
+            onChange={handleChange}
+            name="username"
+            type="text"
+            placeholder="Username"
+            value={values.username}
+            required
+          />
+        </Col>
+        <br />
+        <Col>
+          <Form.Control
+            onChange={handleChange}
+            name="password"
+            type="password"
+            value={values.password}
+            placeholder="Password"
+            required
+          />
+        </Col>
+        <br />
+        <Col>
+          <Button type="submit" block>
+            Sign In
+          </Button>
+        </Col>
+      </Form>
+    </StyledLoginContainer>
   );
 };
 

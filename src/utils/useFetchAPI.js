@@ -1,9 +1,9 @@
 import { useEffect, useReducer } from 'react';
 
-import useApiService from './useApiService';
+import ApiService from './ApiService';
 
 const useFetchApi = (url, initState) => {
-  const { get } = useApiService();
+  const { get } = ApiService();
   const [state, setState] = useReducer(
     (state, newState) => ({
       ...state,
@@ -17,15 +17,14 @@ const useFetchApi = (url, initState) => {
       setState({ isLoading: true });
       try {
         const result = await get(url);
-        setState({ data: result.data, isLoading: false, hasError: false });
+        setState({ data: result, isLoading: false, hasError: false });
       } catch (error) {
         setState({ hasError: true });
         console.log(error);
       }
     };
     fetchData();
-    //eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [url]);
+  }, [get, url]);
   return [state];
 };
 

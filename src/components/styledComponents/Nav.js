@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { NavLink } from 'react-router-dom';
 
 const Nav = styled.nav`
   padding: 0.1em;
@@ -15,20 +16,16 @@ const NavList = styled.ul`
   list-style: none;
   margin: 0;
 `;
-const NavItem = styled.li`
-  & a,
-  button {
-    display: inline-block;
-    padding: 1em;
-    text-decoration: none;
-    color: white;
-  }
-  & button {
-    background: transparent;
-  }
-  & .active {
-    color: #3596f3;
+const StyledNavLink = styled(NavLink)`
+  display: inline-block;
+  padding: 1em;
+  text-decoration: none;
+  padding: 0.5em 1em;
+  color: #fff;
+  &.nav-active {
+    background: #fff;
+    color: #555;
   }
 `;
 
-export { Nav, NavList, NavItem };
+export { Nav, NavList, StyledNavLink };

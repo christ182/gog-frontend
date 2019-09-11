@@ -1,3 +1,5 @@
+import 'bootswatch/dist/sketchy/bootstrap.min.css';
+import 'font-awesome/css/font-awesome.css';
 import 'normalize.css/normalize.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
