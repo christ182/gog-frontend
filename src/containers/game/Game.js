@@ -279,6 +279,7 @@ const Game = () => {
   }
 
   const handleMove = res => {
+    console.log(res);
     let data = res.data ? res.data : res;
 
     socket_board[data.oy][data.ox].piece_id = undefined;
@@ -307,11 +308,14 @@ const Game = () => {
     if (data.winner) {
       let winner = game_pieces.find(p => p.id === data.winner);
       socket_board[data.ny][data.nx].piece_id = data.winner;
-      console.log(winner);
+      winner.x = data.nx;
+      winner.y = data.ny;
       if (winner.color === board_color) {
         socket_board[data.ny][data.nx].piece = winner;
       }
     }
+
+    console.log(state, socket_board);
 
     game.turn = data.turn;
     dispatch({ type: 'UPDATE_BOARD', payload: socket_board });
@@ -373,12 +377,7 @@ const Game = () => {
                     <td
                       key={`${col.x}, ${col.y} `}
                       className={
-                        getBoardColor(col)
-                          ? JSON.stringify(col.piece) ===
-                            JSON.stringify(to_place)
-                            ? 'selected'
-                            : my_board.color
-                          : `${opponent_board.color}`
+                        col.y < 4 ? board_color : `${opponent_board.color}`
                       }
                     >
                       {status === 'setup' ? (
@@ -389,7 +388,7 @@ const Game = () => {
                               ? JSON.stringify(col.piece) ===
                                 JSON.stringify(to_place)
                                 ? 'selected'
-                                : `${my_board.color}`
+                                : board_color
                               : `${opponent_board.color}`
                           }
                         >

@@ -12,7 +12,12 @@ const reducer = (state, action) => {
 
       let my_board = user.id === challenger.id ? challenger : challengee;
       let opponent_board = user.id !== challenger.id ? challenger : challengee;
-      const new_board = handleUpdateBoard(board, my_board, grave_yard);
+      const new_board = handleUpdateBoard(
+        board,
+        my_board,
+        grave_yard,
+        challenger,
+      );
       return {
         ...state,
         game: { ...game, board: new_board },
@@ -171,24 +176,21 @@ function handleUpdateBoard(board, my_board, grave_yard) {
         }
       } else {
         tile.piece = {};
-        // console.log(grave_yard);
       }
 
-      // console.log('piece', tile.x, tile.y, tile.piece_id);
       return tile;
     });
   });
+
   if (my_board.color === 'black') {
     let first_half = new_board
       .map(row => {
-        let filtered = row.filter(p => p.y < 4);
-        return filtered;
+        return row.filter(p => p.y < 4);
       })
       .reverse();
     let second_half = new_board
       .map(row => {
-        let filtered = row.filter(p => p.y >= 4);
-        return filtered;
+        return row.filter(p => p.y >= 4);
       })
       .reverse();
 
@@ -197,6 +199,7 @@ function handleUpdateBoard(board, my_board, grave_yard) {
     let combined = [...second, ...first];
     return combined;
   } else return new_board;
+  // return new_board;
 }
 
 export default reducer;
