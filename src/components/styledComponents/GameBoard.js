@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Button } from 'react-bootstrap';
 
 const Board = styled.div`
   max-width: 45em;
@@ -11,7 +12,7 @@ const BoardContainer = styled.section`
 const PieceContainer = styled.div`
   max-height: 60em;
 `;
-const Grid = styled.button`
+const Piece = styled(Button)`
   max-height: 3em;
   width: 7em;
   border: solid 1px #444;
@@ -41,9 +42,37 @@ const Grid = styled.button`
     background: #3df7ae;
     text-shadow: -1px -1px 1px #444;
   }
+  &.last-move {
+    // background: #c7c7c7;
+    border: dotted 2px #9a9999;
+    & i {
+      text-shadow: -1px -1px 1px rgb(84, 84, 84);
+      display: block;
+      color: black;
+      font-size: 0.8em;
+    }
+  }
 `;
 const BoardRow = styled.div`
   display: inline;
 `;
 
-export { Board, Grid, BoardRow, BoardContainer, PieceContainer };
+const TransparentBtn = styled.button`
+  background: transparent;
+  border: 0;
+  width: 112px;
+  &:hover: {
+    background: transparent;
+    border: 0;
+    width: 112px;
+  }
+`;
+
+export {
+  Board,
+  Piece,
+  BoardRow,
+  BoardContainer,
+  PieceContainer,
+  TransparentBtn,
+};

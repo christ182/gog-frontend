@@ -29,6 +29,14 @@ const GlobalStyle = createGlobalStyle`
 	.active {
 		background:#fff;
 	}
+	.black-text{
+		color:#444;
+		text-shadow: none;
+	}
+	.white-text{
+		color:#fff;
+		text-shadow: none;
+	}
 `;
 
 export default GlobalStyle;

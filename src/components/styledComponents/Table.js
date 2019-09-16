@@ -5,16 +5,20 @@ const Table = styled.table`
   width: 100%;
   & th,
   td {
-    padding: 1em;
+    padding: 0.3em;
     border-collapse: collapse;
-    border: solid 1px #ddd;
+    border: solid 1px #444;
+    text-align: center;
   }
   & th:not(:last-child),
   td:not(:last-child) {
     border-right: 0;
   }
-  & td {
-    border-top: 0;
+  & td.white {
+    background: #fff;
+  }
+  & td.black {
+    background: #1d1d1d;
   }
 `;
 
