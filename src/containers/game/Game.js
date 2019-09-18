@@ -23,6 +23,7 @@ const init_state = {
   game: { board: [], last_move: {}, grave_yard: [], pieces: [] },
   opponent_board: { name: '', ready: 0 },
   online_users: [],
+  flipped: [],
   to_place: null,
   to_move: null,
   my_board: { placed_pieces: [], unplaced_pieces: [], ready: 0 },
@@ -48,6 +49,7 @@ const Game = () => {
     game: { challenger_id },
     status,
     opponent_board,
+    flipped,
   } = state;
   const { placed_pieces, unplaced_pieces } = my_board;
   let { to_place } = state;
@@ -84,8 +86,13 @@ const Game = () => {
       game: { board, last_move, turn, pieces },
       online_users,
       to_move,
+      flipped,
     } = state;
-    setBoard(board);
+    if (flipped.length) {
+      setBoard(flipped);
+    } else {
+      setBoard(board);
+    }
     setMyBoard(my_board);
     setOnlineUsers(online_users);
     setLastMove(last_move);
@@ -95,6 +102,7 @@ const Game = () => {
     game_pieces = pieces;
     socket_board = board;
     board_color = my_board.color;
+
     if (last_move.turn) {
       setTurn(last_move.turn);
     } else {
@@ -147,8 +155,6 @@ const Game = () => {
   }
 
   function movePiece(tile) {
-    console.log('ilalagay', tile);
-    console.log('lalagyan', to_move);
     if (!tile.piece && !to_move) {
       return;
     }
@@ -260,26 +266,41 @@ const Game = () => {
     if (!move) {
       return '';
     }
+
     const dx = move.ox - move.nx;
     const dy = move.oy - move.ny;
+    if (flipped.length) {
+      if (dx < 0 && dy === 0) {
+        return 'fa fa-chevron-right';
+      }
+      if (dx > 0 && dy === 0) {
+        return 'fa fa-chevron-left';
+      }
 
-    if (dx < 0 && dy === 0) {
-      return 'fa fa-chevron-right';
-    }
-    if (dx > 0 && dy === 0) {
-      return 'fa fa-chevron-left';
-    }
+      if (dx === 0 && dy > 0) {
+        return 'fa fa-chevron-down';
+      }
+      if (dx === 0 && dy < 0) {
+        return 'fa fa-chevron-up';
+      }
+    } else {
+      if (dx < 0 && dy === 0) {
+        return 'fa fa-chevron-right';
+      }
+      if (dx > 0 && dy === 0) {
+        return 'fa fa-chevron-left';
+      }
 
-    if (dx === 0 && dy > 0) {
-      return 'fa fa-chevron-up';
-    }
-    if (dx === 0 && dy < 0) {
-      return 'fa fa-chevron-down';
+      if (dx === 0 && dy > 0) {
+        return 'fa fa-chevron-up';
+      }
+      if (dx === 0 && dy < 0) {
+        return 'fa fa-chevron-down';
+      }
     }
   }
 
   const handleMove = res => {
-    console.log(res);
     let data = res.data ? res.data : res;
 
     socket_board[data.oy][data.ox].piece_id = undefined;
@@ -314,8 +335,6 @@ const Game = () => {
         socket_board[data.ny][data.nx].piece = winner;
       }
     }
-
-    console.log(state, socket_board);
 
     game.turn = data.turn;
     dispatch({ type: 'UPDATE_BOARD', payload: socket_board });
@@ -377,7 +396,9 @@ const Game = () => {
                     <td
                       key={`${col.x}, ${col.y} `}
                       className={
-                        col.y < 4 ? board_color : `${opponent_board.color}`
+                        getBoardColor(col)
+                          ? board_color
+                          : `${opponent_board.color}`
                       }
                     >
                       {status === 'setup' ? (
@@ -432,7 +453,10 @@ const Game = () => {
                           </Piece>
                         )
                       ) : checkLastMove(col) ? (
-                        <Piece className="last-move">
+                        <Piece
+                          onClick={() => movePiece(col)}
+                          className="last-move"
+                        >
                           <i className={getLastMoveDirection()}></i>
                           <i>
                             {col.x}, {col.y}

@@ -12,7 +12,7 @@ const reducer = (state, action) => {
 
       let my_board = user.id === challenger.id ? challenger : challengee;
       let opponent_board = user.id !== challenger.id ? challenger : challengee;
-      const new_board = handleUpdateBoard(
+      const flipped = handleUpdateBoard(
         board,
         my_board,
         grave_yard,
@@ -20,8 +20,9 @@ const reducer = (state, action) => {
       );
       return {
         ...state,
-        game: { ...game, board: new_board },
+        game: { ...game, board },
         my_board: my_board,
+        flipped: flipped,
         opponent_board: opponent_board,
         status: status,
       };
@@ -47,6 +48,7 @@ const reducer = (state, action) => {
 
     case 'UPDATE_BOARD': {
       const { game } = state;
+
       return {
         ...state,
         game: {
@@ -182,6 +184,7 @@ function handleUpdateBoard(board, my_board, grave_yard) {
     });
   });
 
+  console.log(my_board.color);
   if (my_board.color === 'black') {
     let first_half = new_board
       .map(row => {
@@ -196,9 +199,9 @@ function handleUpdateBoard(board, my_board, grave_yard) {
 
     let first = first_half.filter(row => row.length > 0);
     let second = second_half.filter(row => row.length > 0);
-    let combined = [...second, ...first];
-    return combined;
-  } else return new_board;
+    let flipped = [...second, ...first];
+    return flipped;
+  } else return [];
   // return new_board;
 }
 
