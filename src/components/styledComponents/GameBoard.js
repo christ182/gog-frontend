@@ -15,6 +15,7 @@ const PieceContainer = styled.div`
 const Piece = styled(Button)`
   max-height: 3em;
   width: 7em;
+  font-size: 0.8em;
   border: solid 1px #444;
   text-align: center;
   display: inline;
@@ -43,8 +44,9 @@ const Piece = styled(Button)`
     text-shadow: -1px -1px 1px #444;
   }
   &.last-move {
-    // background: #c7c7c7;
+    background: rgba(177, 64, 64, 0.21);
     border: dotted 2px #9a9999;
+    padding: 0.8em;
     & i {
       text-shadow: -1px -1px 1px rgb(84, 84, 84);
       display: block;
@@ -61,6 +63,7 @@ const TransparentBtn = styled.button`
   background: transparent;
   border: 0;
   width: 112px;
+  padding:1em
   &:hover: {
     background: transparent;
     border: 0;

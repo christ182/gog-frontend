@@ -34,12 +34,7 @@ const Main = () => {
           >{`Signed in as: ${user.name}`}</Nav.Link>
         </Nav>
       </Navbar>
-      <main>
-        {/* <h2>Hello, Disruptor</h2> */}
-        <StyledPadded>
-          <AppRouter routes={privateRoutes} />
-        </StyledPadded>
-      </main>
+      <AppRouter routes={privateRoutes} />
     </Fragment>
   );
 };

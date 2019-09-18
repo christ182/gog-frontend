@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Card } from 'react-bootstrap';
 
 const FlexContainer = styled.div`
   display: flex;
@@ -32,6 +33,27 @@ const StyledLoginContainer = styled.div`
 `;
 
 const StyledPadded = styled.section`
-  padding: 1em;
+  padding: 0.7em;
 `;
-export { StyledCentered, StyledPadded, StyledLoginContainer, FlexContainer };
+const StyledBordered = styled.section`
+  padding: 0.5em;
+  width: 100%;
+  border: solid 1px #ddd;
+`;
+const StyledCard = styled(Card)`
+  background: rgba(255, 255, 255, 0.51);
+`;
+
+const RelativeContainer = styled.div`
+  position: relative;
+`;
+
+export {
+  StyledCard,
+  StyledCentered,
+  StyledPadded,
+  StyledLoginContainer,
+  StyledBordered,
+  FlexContainer,
+  RelativeContainer,
+};

@@ -9,6 +9,11 @@ const GlobalStyle = createGlobalStyle`
 		--primary: #2196f3;
 		--secondary: #e91e63;
 	}
+	html,
+	body #root,
+	main {
+			min-height: 100%;
+	}
   body {
 		color:var(--text-primary);
 		font-weight:300;

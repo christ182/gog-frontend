@@ -6,7 +6,7 @@ const reducer = (state, action) => {
       const {
         payload: {
           game,
-          game: { board, status, challenger, challengee, grave_yard },
+          game: { board, status, challenger, challengee, grave_yard, chat },
         },
       } = action;
 
@@ -21,6 +21,7 @@ const reducer = (state, action) => {
       return {
         ...state,
         game: { ...game, board },
+        chat: chat,
         my_board: my_board,
         flipped: flipped,
         opponent_board: opponent_board,
@@ -159,6 +160,26 @@ const reducer = (state, action) => {
       };
     }
 
+    case 'UPDATE_GRAVEYARD': {
+      const { game } = state;
+      return {
+        ...state,
+        game: { ...game, grave_yard: action.payload },
+      };
+    }
+
+    case 'UPDATE_CHAT': {
+      const {
+        game,
+        game: { chat },
+      } = state;
+      let new_chat = [...chat, action.payload];
+      return {
+        ...state,
+        game: { ...game, chat: new_chat },
+      };
+    }
+
     default:
       return state;
   }
@@ -184,7 +205,6 @@ function handleUpdateBoard(board, my_board, grave_yard) {
     });
   });
 
-  console.log(my_board.color);
   if (my_board.color === 'black') {
     let first_half = new_board
       .map(row => {

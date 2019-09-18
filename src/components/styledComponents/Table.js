@@ -20,6 +20,9 @@ const Table = styled.table`
   & td.black {
     background: #1d1d1d;
   }
+  & tr.space-between > td {
+    margin-top: 1em;
+  }
 `;
 
 export { Table };

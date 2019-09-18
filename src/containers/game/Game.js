@@ -1,26 +1,24 @@
-import ApiService from 'utils/ApiService';
-import React, { useEffect, useReducer, useState } from 'react';
-import { Button, Card, Col, ListGroup } from 'react-bootstrap';
+import React, { Fragment, useEffect, useReducer, useState } from 'react';
+import { Button, Col } from 'react-bootstrap';
 import { Event } from 'react-socket-io';
 
+import ApiService from 'utils/ApiService';
+import Chat from './chat/Chat';
+import FallenComrades from './fallenPieces/FallenPieces';
 import reducer from './reducer';
-import {
-  FlexContainer,
-  StyledPadded,
-} from 'components/styledComponents/Containers';
+import { FlexContainer } from 'components/styledComponents/Containers';
 import {
   Piece,
   PieceContainer,
   TransparentBtn,
 } from 'components/styledComponents/GameBoard';
-import { StyledHeaderLight } from 'components/styledComponents/Typography';
 import { Table } from 'components/styledComponents/Table';
 
 const user = localStorage.user ? JSON.parse(localStorage.user) : '';
 const { get, getAll, post } = ApiService();
 const init_state = {
   status: '',
-  game: { board: [], last_move: {}, grave_yard: [], pieces: [] },
+  game: { board: [], last_move: {}, grave_yard: [], pieces: [], chat: [] },
   opponent_board: { name: '', ready: 0 },
   online_users: [],
   flipped: [],
@@ -28,6 +26,7 @@ const init_state = {
   to_move: null,
   my_board: { placed_pieces: [], unplaced_pieces: [], ready: 0 },
   last_move: {},
+  chat: [],
   turn: '',
 };
 let unplaced = [];
@@ -35,15 +34,22 @@ let placed = [];
 let socket_board = [];
 let game_pieces = [];
 let board_color = '';
+let opponent_piece_color = '';
+let fallen_pieces = [];
 const Game = () => {
   const [state, dispatch] = useReducer(reducer, init_state);
   const [board, setBoard] = useState([]);
   const [my_board, setMyBoard] = useState(init_state.my_board);
   const [last_move, setLastMove] = useState(init_state.last_move);
+  const [chat, setChat] = useState(init_state.chat);
   const [online_users, setOnlineUsers] = useState(init_state.online_users);
   const [to_move, setToMove] = useState(null);
   const [no_game, setNoGame] = useState(false);
   const [turn, setTurn] = useState(init_state.turn);
+  const [graveyard, setGraveyard] = useState({
+    my_graveyard: [],
+    opponent_graveyard: [],
+  });
   const {
     game,
     game: { challenger_id },
@@ -51,9 +57,12 @@ const Game = () => {
     opponent_board,
     flipped,
   } = state;
+
   const { placed_pieces, unplaced_pieces } = my_board;
   let { to_place } = state;
-  const opponent_piece_color = my_board.color === 'white' ? 'black' : 'white';
+  let { my_graveyard, opponent_graveyard } = graveyard;
+  opponent_piece_color = my_board.color === 'white' ? 'black' : 'white';
+  board_color = my_board.color || 'white';
 
   useEffect(() => {
     const handlefetchAll = async () => {
@@ -80,12 +89,19 @@ const Game = () => {
     handlefetchAll();
   }, []);
 
+  // online users effect
+  useEffect(() => {
+    const { online_users } = state;
+    setOnlineUsers(online_users);
+    return () => {
+      setOnlineUsers([]);
+    };
+  }, [state]);
+
+  //board effect
   useEffect(() => {
     const {
-      my_board,
-      game: { board, last_move, turn, pieces },
-      online_users,
-      to_move,
+      game: { board, pieces },
       flipped,
     } = state;
     if (flipped.length) {
@@ -93,22 +109,83 @@ const Game = () => {
     } else {
       setBoard(board);
     }
-    setMyBoard(my_board);
-    setOnlineUsers(online_users);
-    setLastMove(last_move);
-    setToMove(to_move);
-    unplaced = my_board.unplaced_pieces;
-    placed = my_board.placed_pieces;
     game_pieces = pieces;
     socket_board = board;
-    board_color = my_board.color;
+    return () => {
+      setBoard([]);
+    };
+  }, [state]);
 
+  // my_board effect
+  useEffect(() => {
+    const { my_board } = state;
+    setMyBoard(my_board);
+    unplaced = my_board.unplaced_pieces;
+    placed = my_board.placed_pieces;
+    board_color = my_board.color;
+    return () => {
+      setMyBoard(init_state.my_board);
+    };
+  }, [state]);
+
+  //to_move effect
+  useEffect(() => {
+    const { to_move } = state;
+    setToMove(to_move);
+    return () => {
+      setToMove(null);
+    };
+  }, [state]);
+
+  //last_move
+  useEffect(() => {
+    const {
+      game: { turn, last_move },
+    } = state;
+    setLastMove(last_move);
     if (last_move.turn) {
       setTurn(last_move.turn);
     } else {
       setTurn(turn);
     }
-  }, [game, state]);
+    return () => {
+      setLastMove({});
+    };
+  }, [state]);
+
+  //grave_yard effect
+  useEffect(() => {
+    const {
+      game: { grave_yard },
+    } = state;
+    fallen_pieces = grave_yard;
+    const my_gy = fallen_pieces.filter(p => p.color === board_color);
+    const op_gy = fallen_pieces.filter(p => p.color !== board_color);
+
+    setGraveyard({
+      my_graveyard: my_gy,
+      opponent_graveyard: op_gy,
+    });
+    return () => {
+      setGraveyard({});
+    };
+  }, [state]);
+
+  //chat effects
+  useEffect(() => {
+    const {
+      game: { chat },
+    } = state;
+
+    setChat(chat);
+    return () => {
+      setChat([]);
+    };
+  }, [state]);
+
+  const handleUpdateChat = data => {
+    dispatch({ type: 'UPDATE_CHAT', payload: data.data });
+  };
 
   const challengeUser = user => {
     post(`/challenge/${user.id}/send`).then(res => console.log(res));
@@ -318,8 +395,8 @@ const Game = () => {
 
     if (data.remove) {
       data.remove.forEach(piece_id => {
-        if (game.grave_yard) {
-          game.grave_yard.push(game.pieces.find(p => p.id === piece_id));
+        if (fallen_pieces) {
+          fallen_pieces.push(game_pieces.find(p => p.id === piece_id));
         }
 
         game_pieces = game_pieces.filter(p => p.id !== piece_id);
@@ -340,6 +417,7 @@ const Game = () => {
     dispatch({ type: 'UPDATE_BOARD', payload: socket_board });
     dispatch({ type: 'UPDATE_LAST_MOVE', payload: prev_move });
     dispatch({ type: 'UPDATE_TURN', payload: data.turn });
+    dispatch({ type: 'UPDATE_GRAVEYARD', payload: fallen_pieces });
   };
 
   const checkLastMove = col => {
@@ -347,28 +425,16 @@ const Game = () => {
   };
 
   return (
-    <div>
+    <Fragment>
       {/* Socket */}
       <Event event="new_challenge" handler={handleAcceptChallege}></Event>
       <Event event="piece_placed" handler={updatePiecePlace}></Event>
       <Event event="piece_unplaced" handler={removePiece}></Event>
       <Event event="ready" handler={handleReady}></Event>
       <Event event="move" handler={handleMove}></Event>
+      <Event event="chat" handler={handleUpdateChat}></Event>
 
-      {/* board */}
-      <StyledHeaderLight>The Game of the Generals</StyledHeaderLight>
-      {no_game ? (
-        ''
-      ) : (
-        <>
-          <StyledHeaderLight>
-            {opponent_board.ready === 1 && status === 'setup'
-              ? `${opponent_board.name.toUpperCase()} is ready`
-              : `Playing against ${opponent_board.name.toUpperCase()}`}
-          </StyledHeaderLight>
-          {status !== 'setup' ? <p>{`${turn}'s turn`}</p> : ''}
-        </>
-      )}
+      <h4 className="text-center">The Game of the Generals</h4>
       <FlexContainer>
         <Col>
           {status === 'setup' ? (
@@ -387,11 +453,16 @@ const Game = () => {
           ) : (
             ''
           )}
-
+          <FallenComrades
+            pieces={opponent_graveyard}
+            color={opponent_piece_color}
+            showIcon={false}
+          />
+          <br />
           <Table>
             <tbody>
               {board.map((row, i) => (
-                <tr key={i}>
+                <tr key={i} className={i === 4 ? 'space-between' : ''}>
                   {row.map(col => (
                     <td
                       key={`${col.x}, ${col.y} `}
@@ -435,6 +506,7 @@ const Game = () => {
                       col.piece_id ? (
                         col.piece.id ? (
                           <Piece
+                            disabled={turn !== board_color}
                             onClick={() => movePiece(col)}
                             className={getPieceColor(col)}
                           >
@@ -446,6 +518,7 @@ const Game = () => {
                           </Piece>
                         ) : (
                           <Piece
+                            disabled={turn !== opponent_piece_color}
                             onClick={() => movePiece(col)}
                             className={getPieceColor(col)}
                           >
@@ -458,13 +531,13 @@ const Game = () => {
                           className="last-move"
                         >
                           <i className={getLastMoveDirection()}></i>
-                          <i>
+                          {/* <i>
                             {col.x}, {col.y}
-                          </i>
+                          </i> */}
                         </Piece>
                       ) : (
                         <TransparentBtn onClick={() => movePiece(col)}>
-                          <span>{`${col.x}, ${col.y}`}</span>
+                          {/* <span>{`${col.x}, ${col.y}`}</span> */}
                         </TransparentBtn>
                       )}
                     </td>
@@ -473,6 +546,12 @@ const Game = () => {
               ))}
             </tbody>
           </Table>
+          <br />
+          <FallenComrades
+            pieces={my_graveyard}
+            color={board_color}
+            showIcon={true}
+          />
         </Col>
       </FlexContainer>
       <br />
@@ -500,9 +579,23 @@ const Game = () => {
           </PieceContainer>
         </Col>
       </FlexContainer>
+      <section className="text-center">
+        {no_game ? (
+          ''
+        ) : (
+          <>
+            <h4>
+              {opponent_board.ready === 1 && status === 'setup'
+                ? `${opponent_board.name.toUpperCase()} is ready`
+                : `Playing against ${opponent_board.name.toUpperCase()} `}
+              {status !== 'setup' ? <p>{`${turn}'s turn`}</p> : ''}
+            </h4>
+          </>
+        )}
+      </section>
       <FlexContainer>
         <Col md={4} className="float-right">
-          <Card>
+          {/* <Card>
             <StyledPadded>
               Online Players
               <ListGroup>
@@ -511,22 +604,28 @@ const Game = () => {
                   .map(user => (
                     <ListGroup.Item key={user.id}>
                       {user.name}
-                      <Button
-                        size="sm"
-                        className="float-right"
-                        variant="info"
-                        onClick={() => challengeUser(user)}
-                      >
-                        Challenge
-                      </Button>
+                      {status === 'setup' ? (
+                        <Button
+                          size="sm"
+                          className="float-right"
+                          variant="info"
+                          onClick={() => challengeUser(user)}
+                        >
+                          Challenge
+                        </Button>
+                      ) : (
+                        ''
+                      )}
                     </ListGroup.Item>
                   ))}
               </ListGroup>
             </StyledPadded>
-          </Card>
+          </Card> */}
         </Col>
       </FlexContainer>
-    </div>
+
+      <Chat chat={chat} />
+    </Fragment>
   );
 };
 
