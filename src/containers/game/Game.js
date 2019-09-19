@@ -1,12 +1,15 @@
 import React, { Fragment, useEffect, useReducer, useState } from 'react';
-import { Button, Col } from 'react-bootstrap';
+import { Button, Card, Col, ListGroup } from 'react-bootstrap';
 import { Event } from 'react-socket-io';
 
 import ApiService from 'utils/ApiService';
 import Chat from './chat/Chat';
 import FallenComrades from './fallenPieces/FallenPieces';
 import reducer from './reducer';
-import { FlexContainer } from 'components/styledComponents/Containers';
+import {
+  FlexContainer,
+  StyledPadded,
+} from 'components/styledComponents/Containers';
 import {
   Piece,
   PieceContainer,
@@ -50,19 +53,14 @@ const Game = () => {
     my_graveyard: [],
     opponent_graveyard: [],
   });
-  const {
-    game,
-    game: { challenger_id },
-    status,
-    opponent_board,
-    flipped,
-  } = state;
+  const { game, status, opponent_board, flipped } = state;
 
-  const { placed_pieces, unplaced_pieces } = my_board;
+  const { unplaced_pieces } = my_board;
   let { to_place } = state;
   let { my_graveyard, opponent_graveyard } = graveyard;
   opponent_piece_color = my_board.color === 'white' ? 'black' : 'white';
   board_color = my_board.color || 'white';
+  console.log(board_color);
 
   useEffect(() => {
     const handlefetchAll = async () => {
@@ -92,7 +90,8 @@ const Game = () => {
   // online users effect
   useEffect(() => {
     const { online_users } = state;
-    setOnlineUsers(online_users);
+    let users = online_users.filter(u => u.id !== user.id);
+    setOnlineUsers(users);
     return () => {
       setOnlineUsers([]);
     };
@@ -183,6 +182,21 @@ const Game = () => {
     };
   }, [state]);
 
+  const handleStartGame = data => {
+    dispatch({ type: 'DID_FETCH_GAME', payload: { game: data } });
+  };
+
+  const getNewUser = data => {
+    setOnlineUsers(users => {
+      let has_user = users.find(user => user.id === data.id);
+      if (!has_user) {
+        return [...users, ...[data]];
+      } else {
+        return users;
+      }
+    });
+  };
+
   const handleUpdateChat = data => {
     dispatch({ type: 'UPDATE_CHAT', payload: data.data });
   };
@@ -192,7 +206,7 @@ const Game = () => {
   };
 
   const getBoardColor = col => {
-    return challenger_id === user.id ? col.y >= 4 : col.y < 4;
+    return my_board.color === 'white' ? col.y >= 4 : col.y < 4;
   };
   const sendPiecePlace = async body => {
     await post('/game/place', body).then(res => res);
@@ -235,8 +249,11 @@ const Game = () => {
     if (!tile.piece && !to_move) {
       return;
     }
+
     if (!to_move) {
-      setToMove(tile);
+      if (tile.piece.color === board_color) {
+        setToMove(tile);
+      }
       return;
     }
 
@@ -427,6 +444,8 @@ const Game = () => {
   return (
     <Fragment>
       {/* Socket */}
+      <Event event="game" handler={handleStartGame}></Event>
+      <Event event="new_user" handler={getNewUser}></Event>
       <Event event="new_challenge" handler={handleAcceptChallege}></Event>
       <Event event="piece_placed" handler={updatePiecePlace}></Event>
       <Event event="piece_unplaced" handler={removePiece}></Event>
@@ -438,18 +457,13 @@ const Game = () => {
       <FlexContainer>
         <Col>
           {status === 'setup' ? (
-            placed_pieces.length === 21 ? (
+            <>
               <Button variant="warning" onClick={() => sendStatusReady()}>
                 I am ready
               </Button>
-            ) : (
-              <>
-                <Button onClick={() => handleRandomSetup()}>
-                  Random Setup
-                </Button>
-                <Button onClick={() => handleClearSetUp()}>Clear</Button>
-              </>
-            )
+              <Button onClick={() => handleRandomSetup()}>Random Setup</Button>
+              <Button onClick={() => handleClearSetUp()}>Clear</Button>
+            </>
           ) : (
             ''
           )}
@@ -506,7 +520,6 @@ const Game = () => {
                       col.piece_id ? (
                         col.piece.id ? (
                           <Piece
-                            disabled={turn !== board_color}
                             onClick={() => movePiece(col)}
                             className={getPieceColor(col)}
                           >
@@ -518,7 +531,6 @@ const Game = () => {
                           </Piece>
                         ) : (
                           <Piece
-                            disabled={turn !== opponent_piece_color}
                             onClick={() => movePiece(col)}
                             className={getPieceColor(col)}
                           >
@@ -564,9 +576,7 @@ const Game = () => {
                 className={
                   JSON.stringify(piece) === JSON.stringify(to_place)
                     ? 'selected'
-                    : piece.color === 'white'
-                    ? 'white'
-                    : 'black'
+                    : board_color
                 }
                 onClick={() => handleSetToPlace(piece)}
               >
@@ -595,16 +605,15 @@ const Game = () => {
       </section>
       <FlexContainer>
         <Col md={4} className="float-right">
-          {/* <Card>
+          <Card>
             <StyledPadded>
               Online Players
               <ListGroup>
-                {online_users
-                  .filter(u => u.id !== user.id)
-                  .map(user => (
+                {online_users.length > 0 ? (
+                  online_users.map(user => (
                     <ListGroup.Item key={user.id}>
                       {user.name}
-                      {status === 'setup' ? (
+                      {user.status === '~' || user.status === 'setup' ? (
                         <Button
                           size="sm"
                           className="float-right"
@@ -617,10 +626,13 @@ const Game = () => {
                         ''
                       )}
                     </ListGroup.Item>
-                  ))}
+                  ))
+                ) : (
+                  <ListGroup.Item>No online users found </ListGroup.Item>
+                )}
               </ListGroup>
             </StyledPadded>
-          </Card> */}
+          </Card>
         </Col>
       </FlexContainer>
 

@@ -4,8 +4,6 @@ import { Nav, Navbar } from 'react-bootstrap';
 import AppRouter from 'components/AppRouter';
 import privateRoutes from 'routes/privateRoutes';
 import { AuthContext } from 'components/AuthContext';
-// import { StyledNavLink } from 'components/styledComponents/Nav';
-import { StyledPadded } from 'components/styledComponents/Containers';
 
 const user = JSON.parse(localStorage.user);
 const Main = () => {

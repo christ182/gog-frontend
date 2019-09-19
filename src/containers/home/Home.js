@@ -3,7 +3,6 @@ import { Button, Col, Form } from 'react-bootstrap';
 
 import useForm from 'utils/useForm';
 import { AuthContext } from 'components/AuthContext';
-import { StyledHeader } from 'components/styledComponents/Typography';
 import { StyledLoginContainer } from 'components/styledComponents/Containers';
 
 const initState = {
@@ -22,7 +21,7 @@ const Home = () => {
   return (
     <StyledLoginContainer>
       <Form onSubmit={handleSubmit}>
-        <StyledHeader>Game of the Generals</StyledHeader>
+        <h2>Game of the Generals</h2>
         <Col>
           <Form.Control
             onChange={handleChange}

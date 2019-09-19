@@ -13,7 +13,6 @@ import {
 const user = localStorage.user ? JSON.parse(localStorage.user) : '';
 const { post } = ApiService();
 
-let is_scrolled = false;
 const Chat = ({ chat }) => {
   const [messages, setMessages] = useState([]);
   const [open, setOpen] = useState(1);
@@ -109,6 +108,7 @@ const Chat = ({ chat }) => {
                     value={values.message}
                     name="message"
                     type="text"
+                    required
                     onChange={handleChange}
                   />
                   <InputGroup.Append>
