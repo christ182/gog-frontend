@@ -246,11 +246,10 @@ const Game = () => {
 
   let body = {};
   function moveMyPiece(tile) {
-    console.log('tile', tile.x, tile.y);
     setToMove(to_move);
 
     let key_length = Object.keys(body).length;
-    if (tile.piece_id && key_length === 0) {
+    if (tile.piece_id && key_length === 0 && tile.piece.color) {
       body = {
         ...body,
         ox: tile.x,
@@ -274,6 +273,8 @@ const Game = () => {
         };
       }
     }
+
+    console.log(body);
 
     if (key_length === 4) {
       post('/game/move', body).then(() => {
