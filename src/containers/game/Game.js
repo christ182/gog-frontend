@@ -60,7 +60,6 @@ const Game = () => {
   let { my_graveyard, opponent_graveyard } = graveyard;
   opponent_piece_color = my_board.color === 'white' ? 'black' : 'white';
   board_color = my_board.color || 'white';
-  console.log(board_color);
 
   useEffect(() => {
     const handlefetchAll = async () => {
@@ -128,13 +127,13 @@ const Game = () => {
   }, [state]);
 
   //to_move effect
-  useEffect(() => {
-    const { to_move } = state;
-    setToMove(to_move);
-    return () => {
-      setToMove(null);
-    };
-  }, [state]);
+  // useEffect(() => {
+  //   const { to_move } = state;
+  //   setToMove(to_move);
+  //   return () => {
+  //     setToMove(null);
+  //   };
+  // }, [state]);
 
   //last_move
   useEffect(() => {
@@ -245,30 +244,44 @@ const Game = () => {
     }
   }
 
-  function movePiece(tile) {
-    if (!tile.piece && !to_move) {
-      return;
-    }
+  let body = {};
+  function moveMyPiece(tile) {
+    console.log('tile', tile.x, tile.y);
+    setToMove(to_move);
 
-    if (!to_move) {
-      if (tile.piece.color === board_color) {
-        setToMove(tile);
+    let key_length = Object.keys(body).length;
+    if (tile.piece_id && key_length === 0) {
+      body = {
+        ...body,
+        ox: tile.x,
+        oy: tile.y,
+      };
+    }
+    if (key_length === 2 && !tile.piece.color) {
+      body = {
+        ...body,
+        nx: tile.x,
+        ny: tile.y,
+      };
+      key_length = Object.keys(body).length;
+    }
+    if (!tile.piece_id) {
+      if (body.ox) {
+        body = {
+          ...body,
+          nx: tile.x,
+          ny: tile.y,
+        };
       }
-      return;
     }
 
-    if (to_move === tile) {
-      setToMove(tile);
+    if (key_length === 4) {
+      post('/game/move', body).then(() => {
+        console.log('piece moved');
+      });
+    } else {
       return;
     }
-
-    let body = {
-      ox: to_move.x,
-      oy: to_move.y,
-      nx: tile.x,
-      ny: tile.y,
-    };
-    post('/game/move', body);
   }
 
   function updatePiecePlace(data) {
@@ -395,6 +408,7 @@ const Game = () => {
   }
 
   const handleMove = res => {
+    console.log('socket:move', res);
     let data = res.data ? res.data : res;
 
     socket_board[data.oy][data.ox].piece_id = undefined;
@@ -520,7 +534,8 @@ const Game = () => {
                       col.piece_id ? (
                         col.piece.id ? (
                           <Piece
-                            onClick={() => movePiece(col)}
+                            disabled={turn !== board_color}
+                            onClick={() => moveMyPiece(col)}
                             className={getPieceColor(col)}
                           >
                             {col.piece.icons &&
@@ -531,7 +546,7 @@ const Game = () => {
                           </Piece>
                         ) : (
                           <Piece
-                            onClick={() => movePiece(col)}
+                            onClick={() => moveMyPiece(col)}
                             className={getPieceColor(col)}
                           >
                             &#x25cf;
@@ -539,7 +554,7 @@ const Game = () => {
                         )
                       ) : checkLastMove(col) ? (
                         <Piece
-                          onClick={() => movePiece(col)}
+                          onClick={() => moveMyPiece(col)}
                           className="last-move"
                         >
                           <i className={getLastMoveDirection()}></i>
@@ -548,8 +563,8 @@ const Game = () => {
                           </i> */}
                         </Piece>
                       ) : (
-                        <TransparentBtn onClick={() => movePiece(col)}>
-                          {/* <span>{`${col.x}, ${col.y}`}</span> */}
+                        <TransparentBtn onClick={() => moveMyPiece(col)}>
+                          <span>{`${col.x}, ${col.y}`}</span>
                         </TransparentBtn>
                       )}
                     </td>
