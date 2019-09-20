@@ -3,7 +3,7 @@ import { Card } from 'react-bootstrap';
 
 const ChatContainer = styled.div`
   width: 20em;
-  position: absolute;
+  position: fixed;
   right: 1em;
   bottom: 0;
 `;

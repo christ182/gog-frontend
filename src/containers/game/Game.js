@@ -274,12 +274,8 @@ const Game = () => {
       }
     }
 
-    console.log(body);
-
     if (key_length === 4) {
-      post('/game/move', body).then(() => {
-        console.log('piece moved');
-      });
+      post('/game/move', body);
     } else {
       return;
     }
@@ -565,7 +561,7 @@ const Game = () => {
                         </Piece>
                       ) : (
                         <TransparentBtn onClick={() => moveMyPiece(col)}>
-                          <span>{`${col.x}, ${col.y}`}</span>
+                          {/* <span>{`${col.x}, ${col.y}`}</span> */}
                         </TransparentBtn>
                       )}
                     </td>
