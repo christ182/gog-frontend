@@ -21,6 +21,7 @@ import {
 
 import AcceptChallenge from './AcceptChallenge';
 // import { BtnSm } from 'components/styledComponents/Buttons';
+import GameEnd from './GameEnd';
 import Setup from './Setup';
 import { GridContainer, Piece } from 'components/styledComponents/GameBoard';
 // import { StyledHeader } from 'components/styledComponents/Typography';
@@ -57,6 +58,8 @@ const Game = () => {
   const [to_move, setToMove] = useState(null);
   const [no_game, setNoGame] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [showWinner, setShowWinner] = useState(false);
+  const [winner, setWinner] = useState({});
   const [challenge, setChallenge] = useState({});
   const [turn, setTurn] = useState(init_state.turn);
   const [graveyard, setGraveyard] = useState({
@@ -474,10 +477,22 @@ const Game = () => {
     });
   };
 
+  const receiveEndGame = data => {
+    console.log('game over', data);
+    setShowWinner(true);
+    setWinner(data);
+  };
+
+  const endGame = () => {
+    setShowWinner(false);
+    handlefetchAll();
+  };
+
   return (
     <Fragment>
       {/* socket */}
       <Event event="game" handler={handleStartGame}></Event>
+      <Event event="game_end" handler={receiveEndGame}></Event>
       <Event event="new_user" handler={getNewUser}></Event>
       <Event event="new_challenge" handler={receiveChallenge}></Event>
       <Event
@@ -587,39 +602,9 @@ const Game = () => {
       <FlexContainer>
         <Col sm={5}>
           <Card>
-            <Card.Header className={opponent_piece_color}>
-              {opponent_board.name || 'No opponent'}
-            </Card.Header>
-            <Card.Body>
-              {status === 'ongoing' && (
-                <FallenComrades
-                  pieces={opponent_graveyard}
-                  color={opponent_piece_color}
-                  showIcon={false}
-                />
-              )}
-              {status === 'setup' && opponent_board.ready === 0 && (
-                <h5>setup</h5>
-              )}
-              {status === 'setup' && opponent_board.ready === 1 && (
-                <h5>ready</h5>
-              )}
-              {no_game && (
-                <Card.Body>
-                  <span>No game found</span>
-                </Card.Body>
-              )}
-            </Card.Body>
-          </Card>
-        </Col>
-        <Col>
-          <h4 className="text-center">vs</h4>
-        </Col>
-        <Col sm={5}>
-          <Card>
             <Card.Header className={board_color}>
-              {my_board.name || user.name}
-              {status === 'ongoing' && (
+              You
+              {!no_game && status === 'ongoing' && (
                 <Button
                   className="float-right"
                   variant="danger"
@@ -656,7 +641,7 @@ const Game = () => {
             </Card.Header>
             <Card.Body>
               {my_board.ready === 1 && status !== 'ongoing' && <h5>ready</h5>}
-              {status === 'ongoing' && (
+              {!no_game && status === 'ongoing' && (
                 <FallenComrades
                   pieces={my_graveyard}
                   color={board_color}
@@ -699,6 +684,37 @@ const Game = () => {
             </Card.Body>
           </Card>
         </Col>
+        <Col>
+          <h4 className="text-center">vs</h4>
+        </Col>
+        {/* opponent */}
+        <Col sm={5}>
+          <Card>
+            <Card.Header className={opponent_piece_color}>
+              {opponent_board.name || 'No opponent'}
+            </Card.Header>
+            <Card.Body>
+              {!no_game && status === 'ongoing' && (
+                <FallenComrades
+                  pieces={opponent_graveyard}
+                  color={opponent_piece_color}
+                  showIcon={false}
+                />
+              )}
+              {status === 'setup' && opponent_board.ready === 0 && (
+                <h5>setup</h5>
+              )}
+              {status === 'setup' && opponent_board.ready === 1 && (
+                <h5>ready</h5>
+              )}
+              {no_game && (
+                <Card.Body>
+                  <span>No game found</span>
+                </Card.Body>
+              )}
+            </Card.Body>
+          </Card>
+        </Col>
       </FlexContainer>
       <Chat chat={chat} />
       <br />
@@ -709,6 +725,7 @@ const Game = () => {
         accept={handleAcceptChallege}
         decline={setShowModal}
       />
+      <GameEnd show={showWinner} data={winner} close={endGame} />
     </Fragment>
   );
 };
