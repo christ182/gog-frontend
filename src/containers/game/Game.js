@@ -238,7 +238,6 @@ const Game = () => {
   }
 
   function placePiece(x, y, set_to_place) {
-    console.log('yx', y, x);
     to_place = set_to_place ? set_to_place : to_place;
 
     if (to_place) {
@@ -260,7 +259,6 @@ const Game = () => {
 
   let body = {};
   function moveMyPiece(tile) {
-    console.log(tile);
     setToMove(to_move);
 
     let key_length = Object.keys(body).length;
@@ -421,7 +419,6 @@ const Game = () => {
   }
 
   const handleMove = res => {
-    console.log('socket:move', res);
     let data = res.data ? res.data : res;
 
     socket_board[data.oy][data.ox].piece_id = undefined;
@@ -470,7 +467,6 @@ const Game = () => {
 
   const surrender = () => {
     post('/game/surrender').then(res => {
-      console.log(res);
       window.location.reload();
     });
   };
