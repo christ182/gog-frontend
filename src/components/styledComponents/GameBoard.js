@@ -37,7 +37,8 @@ const BoardRow = styled.div`
 `;
 
 const GridContainer = styled.div`
-  display: flex;
+	display: flex;
+
   // ${({ nowrap }) => nowrap && `flex-wrap:${nowrap}`};
   & div {
     height: 3em;

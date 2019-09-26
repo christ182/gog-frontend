@@ -237,6 +237,10 @@ const Game = () => {
     setChallenge(data);
   }
 
+  function handleChallengeAccepted() {
+    handlefetchAll();
+  }
+
   function placePiece(x, y, set_to_place) {
     to_place = set_to_place ? set_to_place : to_place;
 
@@ -359,9 +363,8 @@ const Game = () => {
   }
 
   function handleReady(data) {
-    return my_board.id === data.id
-      ? (my_board.ready = 1)
-      : (opponent_board.ready = 1);
+    handlefetchAll();
+    // dispatch({ type: 'UPDATE_MY_BOARD', payload: { ready: 1 } });
   }
 
   function getPieceColor(col = { piece: {} }) {
@@ -467,7 +470,7 @@ const Game = () => {
 
   const surrender = () => {
     post('/game/surrender').then(res => {
-      window.location.reload();
+      handlefetchAll();
     });
   };
 
@@ -477,6 +480,10 @@ const Game = () => {
       <Event event="game" handler={handleStartGame}></Event>
       <Event event="new_user" handler={getNewUser}></Event>
       <Event event="new_challenge" handler={receiveChallenge}></Event>
+      <Event
+        event="challenge_accepted"
+        handler={handleChallengeAccepted}
+      ></Event>
       <Event event="piece_placed" handler={updatePiecePlace}></Event>
       <Event event="piece_unplaced" handler={removePiece}></Event>
       <Event event="ready" handler={handleReady}></Event>
@@ -591,7 +598,12 @@ const Game = () => {
                   showIcon={false}
                 />
               )}
-              {status === 'setup' && <h5>setup</h5>}
+              {status === 'setup' && opponent_board.ready === 0 && (
+                <h5>setup</h5>
+              )}
+              {status === 'setup' && opponent_board.ready === 1 && (
+                <h5>ready</h5>
+              )}
               {no_game && (
                 <Card.Body>
                   <span>No game found</span>
@@ -643,6 +655,7 @@ const Game = () => {
               )}
             </Card.Header>
             <Card.Body>
+              {my_board.ready === 1 && status !== 'ongoing' && <h5>ready</h5>}
               {status === 'ongoing' && (
                 <FallenComrades
                   pieces={my_graveyard}
@@ -673,6 +686,7 @@ const Game = () => {
               )}
               {!no_game &&
                 status !== 'ongoing' &&
+                my_board.ready === 0 &&
                 unplaced_pieces.length === 0 && (
                   <div className="text-center">
                     <Button variant="warning" onClick={() => sendStatusReady()}>
