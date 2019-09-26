@@ -42,6 +42,10 @@ const GlobalStyle = createGlobalStyle`
 		color:#fff;
 		text-shadow: none;
 	}
+	.black{
+		background:#303033;
+		color:#ffeb3b;
+	}
 `;
 
 export default GlobalStyle;

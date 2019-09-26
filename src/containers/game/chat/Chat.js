@@ -15,7 +15,7 @@ const { post } = ApiService();
 
 const Chat = ({ chat }) => {
   const [messages, setMessages] = useState([]);
-  const [open, setOpen] = useState(1);
+  const [open, setOpen] = useState(0);
   let messagesEndRef = useRef(null);
   const { handleChange, handleSubmit, values, resetValues } = useForm(
     sendMessage,
@@ -73,7 +73,7 @@ const Chat = ({ chat }) => {
     <ChatContainer>
       <Accordion activeKey={1}>
         <Card>
-          <Card.Header>
+          <Card.Header style={{ padding: '0.2em' }}>
             <Accordion.Toggle
               className="float-right"
               as={Button}
@@ -87,7 +87,7 @@ const Chat = ({ chat }) => {
                 }`}
               ></i>
             </Accordion.Toggle>
-            <span>Chat</span>
+            <span style={{ padding: 2 }}>Chat</span>
           </Card.Header>
           <Accordion.Collapse eventKey={open}>
             <ChatBody>

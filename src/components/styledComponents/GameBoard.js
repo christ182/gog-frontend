@@ -1,6 +1,12 @@
 import styled from 'styled-components';
 import { Button } from 'react-bootstrap';
 
+const screen = {
+  desktop: 992,
+  tablet: 768,
+  phone: 368,
+};
+
 const Board = styled.div`
   max-width: 45em;
   align-content: center;
@@ -13,61 +19,56 @@ const PieceContainer = styled.div`
   max-height: 60em;
 `;
 const Piece = styled(Button)`
-  max-height: 3em;
-  width: 7em;
-  font-size: 0.8em;
-  border: solid 1px #444;
-  text-align: center;
-  display: inline;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-weight: bold;
-  -webkit-margin-before: 0.3em;
-  -webkit-margin-after: 0.2em;
-  &.white {
-    text-shadow: -1px -1px 1px #444;
-    background: #fefefe;
-  }
+  height: 4em;
+  width: 4em;
+  padding: 0;
+  font-size: 0.7em;
   &.black {
-    background-image: -webkit-linear-gradient(#f1e300, #4a3800);
-    text-shadow: -1px -1px 1px rgb(255, 223, 0);
     background: #303033;
-    color: #fff;
+    color: #ffeb3b;
   }
-  &.sm {
-    max-height: 2em;
-    width: 4em;
-    font-size: 0.9em;
-  }
-  &.selected {
-    background: #3df7ae;
-    text-shadow: -1px -1px 1px #444;
-  }
-  &.last-move {
-    background: rgba(177, 64, 64, 0.21);
-    border: dotted 2px #9a9999;
-    padding: 0.8em;
-    & i {
-      text-shadow: -1px -1px 1px rgb(84, 84, 84);
-      display: block;
-      color: black;
-      font-size: 0.8em;
-    }
+  &.white {
+    background: #fefefe;
+    color: #636363;
   }
 `;
 const BoardRow = styled.div`
   display: inline;
 `;
 
-const TransparentBtn = styled.button`
-  background: transparent;
-  border: 0;
-  width: 112px;
-  padding:1em
-  &:hover: {
-    background: transparent;
-    border: 0;
-    width: 112px;
+const GridContainer = styled.div`
+  display: flex;
+  // ${({ nowrap }) => nowrap && `flex-wrap:${nowrap}`};
+  & div {
+    height: 3em;
+    width: 3em;
+    ${({ border }) => border && 'border:solid 1px #ddd'}
+  }
+
+  @media (min-width: ${screen.desktop}px) {
+    & div {
+      height: 3em;
+      width: 14em;
+      ${({ border }) => border && 'border:solid 1px #ddd'}
+    }
+  }
+
+  @media (min-width: ${screen.tablet}px) and (max-width:${screen.desktop -
+  1}px) {
+    & div {
+      height: 3em;
+      width: 10em;
+      ${({ border }) => border && 'border:solid 1px #ddd'}
+    }
+  }
+
+  @media (min-width: ${screen.phone}px) and (max-width: ${screen.tablet -
+  1}px) {
+    & div {
+      height: 3em;
+      width: 8em;
+      ${({ border }) => border && 'border:solid 1px #ddd'}
+    }
   }
 `;
 
@@ -77,5 +78,5 @@ export {
   BoardRow,
   BoardContainer,
   PieceContainer,
-  TransparentBtn,
+  GridContainer,
 };

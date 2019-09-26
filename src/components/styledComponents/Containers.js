@@ -4,6 +4,7 @@ import { Card } from 'react-bootstrap';
 const FlexContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
+  margin: 1em 0;
 `;
 
 const StyledCentered = styled.section`

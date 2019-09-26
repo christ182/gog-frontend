@@ -5,10 +5,12 @@ const Table = styled.table`
   width: 100%;
   & th,
   td {
-    padding: 0.3em;
     border-collapse: collapse;
     border: solid 1px #444;
     text-align: center;
+    padding: 0;
+    max-width: 2em;
+    height: 1.5em;
   }
   & th:not(:last-child),
   td:not(:last-child) {
