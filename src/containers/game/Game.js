@@ -507,7 +507,7 @@ const Game = () => {
 
       {/* game */}
       <FlexContainer>
-        {status === 'ongoing' && (
+        {!no_game && status === 'ongoing' && (
           <Col>
             <Alert variant="warning">
               <h4 className="text-center">
