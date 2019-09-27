@@ -49,6 +49,10 @@ const RelativeContainer = styled.div`
   position: relative;
 `;
 
+const RefreshContainer = styled.div`
+  height: 90vh;
+`;
+
 export {
   StyledCard,
   StyledCentered,
@@ -57,4 +61,5 @@ export {
   StyledBordered,
   FlexContainer,
   RelativeContainer,
+  RefreshContainer,
 };

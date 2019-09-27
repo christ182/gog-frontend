@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   PullDownContent,
   PullToRefresh,
@@ -7,6 +7,8 @@ import {
 } from 'react-js-pull-to-refresh';
 
 import MainBoard from './MainBoard';
+
+import { RefreshContainer } from 'components/styledComponents/Containers';
 
 const Game = () => {
   const [state, setState] = useState(0);
@@ -17,25 +19,28 @@ const Game = () => {
     });
   };
 
-  useEffect(() => {
-    console.log(state);
-    return () => {};
-  }, [state]);
-
   return (
     <div>
       <PullToRefresh
-        pullDownContent={<PullDownContent />}
-        releaseContent={<ReleaseContent />}
+        pullDownContent={
+          <div style={{ textAlign: 'center', visibility: 'hidden' }}>
+            <PullDownContent />
+          </div>
+        }
+        releaseContent={
+          <div style={{ textAlign: 'center', visibility: 'hidden' }}>
+            <ReleaseContent />
+          </div>
+        }
         refreshContent={<RefreshContent />}
         pullDownThreshold={100}
         onRefresh={handleFetch}
-        triggerHeight="auto"
         startInvisible={true}
+        triggerHeight="auto"
       >
-        <div style={{ height: '80vh', textAlign: 'center' }}>
+        <RefreshContainer>
           <MainBoard refresh={state} />
-        </div>
+        </RefreshContainer>
       </PullToRefresh>
     </div>
   );
