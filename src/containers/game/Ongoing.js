@@ -39,8 +39,8 @@ const Ongoing = ({
         <BtnSm onClick={() => moveMyPiece(col)} className="last-move">
           <i className={getLastMoveDirection()}></i>
           {/* <i>
-                            {col.x}, {col.y}
-                          </i> */}
+            {col.x}, {col.y}
+          </i> */}
         </BtnSm>
       ) : (
         <TransparentBtn onClick={() => moveMyPiece(col)}>

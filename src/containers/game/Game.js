@@ -266,31 +266,32 @@ const Game = () => {
 
   let body = {};
   function moveMyPiece(tile) {
-    setToMove(to_move);
+    if (tile.piece_id) {
+      setToMove(tile);
+    }
 
     let key_length = Object.keys(body).length;
-    if (tile.piece_id && key_length === 0 && tile.piece.color) {
+
+    if (to_move && !tile.piece_id) {
+      console.log('here');
       body = {
-        ...body,
-        ox: tile.x,
-        oy: tile.y,
-      };
-    }
-    if (key_length === 2 && !tile.piece.color) {
-      body = {
-        ...body,
+        // ...body,
+        ox: to_move.x,
+        oy: to_move.y,
         nx: tile.x,
         ny: tile.y,
       };
       key_length = Object.keys(body).length;
-    }
-    if (!tile.piece_id) {
-      if (body.ox) {
+    } else if (to_move && tile.piece_id) {
+      if (tile.piece.color !== board_color && turn === board_color) {
         body = {
-          ...body,
+          // ...body,
+          ox: to_move.x,
+          oy: to_move.y,
           nx: tile.x,
           ny: tile.y,
         };
+        key_length = Object.keys(body).length;
       }
     }
 
