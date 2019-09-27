@@ -1,3 +1,4 @@
+import Proptypes from 'prop-types';
 import React from 'react';
 
 import { BtnSm, TransparentBtn } from 'components/styledComponents/Buttons';
@@ -49,6 +50,16 @@ const Ongoing = ({
       )}
     </>
   );
+};
+
+Ongoing.propTypes = {
+  turn: Proptypes.string.isRequired,
+  board_color: Proptypes.string.isRequired,
+  col: Proptypes.object.isRequired,
+  moveMyPiece: Proptypes.func.isRequired,
+  getPieceColor: Proptypes.func.isRequired,
+  checkLastMove: Proptypes.func.isRequired,
+  getLastMoveDirection: Proptypes.func.isRequired,
 };
 
 export default Ongoing;

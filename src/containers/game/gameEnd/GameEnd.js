@@ -1,3 +1,4 @@
+import Proptypes from 'prop-types';
 import React from 'react';
 import { Modal } from 'react-bootstrap';
 
@@ -14,6 +15,12 @@ const GameEnd = ({ show, data, close }) => {
       </Modal.Body>
     </Modal>
   );
+};
+
+GameEnd.propTypes = {
+  show: Proptypes.bool.isRequired,
+  data: Proptypes.object.isRequired,
+  close: Proptypes.func.isRequired,
 };
 
 export default GameEnd;

@@ -1,4 +1,6 @@
+import PropTypes from 'prop-types';
 import React from 'react';
+
 import { BtnSm } from 'components/styledComponents/Buttons';
 
 const Setup = ({
@@ -42,6 +44,16 @@ const Setup = ({
       </BtnSm>
     </>
   );
+};
+
+Setup.propTypes = {
+  placePiece: PropTypes.func.isRequired,
+  getBoardColor: PropTypes.func.isRequired,
+  col: PropTypes.object.isRequired,
+  toPlace: PropTypes.object.isRequired,
+  boardColor: PropTypes.string.isRequired,
+  opponentBoard: PropTypes.object.isRequired,
+  getPieceColor: PropTypes.func.isRequired,
 };
 
 export default Setup;

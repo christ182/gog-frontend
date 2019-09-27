@@ -1,21 +1,19 @@
 import React, { Fragment, useEffect, useReducer, useState } from 'react';
-import { Button, Card, Col, ListGroup } from 'react-bootstrap';
+import { Alert, Button, ButtonGroup, Card, Col } from 'react-bootstrap';
 import { Event } from 'react-socket-io';
 
 import ApiService from 'utils/ApiService';
 import Chat from './chat/Chat';
 import FallenComrades from './fallenPieces/FallenPieces';
+import Ongoing from './ongoing/Ongoing';
 import reducer from './reducer';
-import {
-  FlexContainer,
-  StyledPadded,
-} from 'components/styledComponents/Containers';
-import {
-  Piece,
-  PieceContainer,
-  TransparentBtn,
-} from 'components/styledComponents/GameBoard';
-import { Table } from 'components/styledComponents/Table';
+import { FlexContainer } from 'components/styledComponents/Containers';
+
+import AcceptChallenge from './acceptChallenge/AcceptChallenge';
+import GameEnd from './gameEnd/GameEnd';
+import OnlineUsers from './onlineUsers/OnlineUsers';
+import Setup from './setup/Setup';
+import { GridContainer, Piece } from 'components/styledComponents/GameBoard';
 
 const user = localStorage.user ? JSON.parse(localStorage.user) : '';
 const { get, getAll, post } = ApiService();
@@ -39,7 +37,8 @@ let game_pieces = [];
 let board_color = '';
 let opponent_piece_color = '';
 let fallen_pieces = [];
-const Game = () => {
+
+const MainBoard = ({ refresh }) => {
   const [state, dispatch] = useReducer(reducer, init_state);
   const [board, setBoard] = useState([]);
   const [my_board, setMyBoard] = useState(init_state.my_board);
@@ -47,13 +46,19 @@ const Game = () => {
   const [chat, setChat] = useState(init_state.chat);
   const [online_users, setOnlineUsers] = useState(init_state.online_users);
   const [to_move, setToMove] = useState(null);
-  const [no_game, setNoGame] = useState(false);
+  const [no_game, setNoGame] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [showWinner, setShowWinner] = useState(false);
+  const [winner, setWinner] = useState({});
+  const [challenge, setChallenge] = useState({});
   const [turn, setTurn] = useState(init_state.turn);
   const [graveyard, setGraveyard] = useState({
     my_graveyard: [],
     opponent_graveyard: [],
   });
   const { game, status, opponent_board, flipped } = state;
+  const player_turn =
+    turn === board_color ? 'your' : `${opponent_board.name}'s`;
 
   const { unplaced_pieces } = my_board;
   let { to_place } = state;
@@ -62,29 +67,30 @@ const Game = () => {
   board_color = my_board.color || 'white';
 
   useEffect(() => {
-    const handlefetchAll = async () => {
-      getAll([await get('/auth/online'), await get('/game/mine')])
-        .then(([data]) => {
-          const [res_online_users, res_game_data] = data;
-          if (res_game_data.data.game) {
-            dispatch({
-              type: 'DID_FETCH_GAME',
-              payload: {
-                game: res_game_data.data.game,
-              },
-            });
-            setNoGame(false);
-          } else {
-            setNoGame(true);
-          }
-          dispatch({ type: 'DID_FETCH_USERS', payload: res_online_users });
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    };
     handlefetchAll();
-  }, []);
+  }, [refresh]);
+
+  const handlefetchAll = async () => {
+    getAll([await get('/auth/online'), await get('/game/mine')])
+      .then(([data]) => {
+        const [res_online_users, res_game_data] = data;
+        if (res_game_data.data.game) {
+          dispatch({
+            type: 'DID_FETCH_GAME',
+            payload: {
+              game: res_game_data.data.game,
+            },
+          });
+          setNoGame(false);
+        } else {
+          setNoGame(true);
+        }
+        dispatch({ type: 'DID_FETCH_USERS', payload: res_online_users });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
 
   // online users effect
   useEffect(() => {
@@ -112,7 +118,7 @@ const Game = () => {
     return () => {
       setBoard([]);
     };
-  }, [state]);
+  }, [game.board, state]);
 
   // my_board effect
   useEffect(() => {
@@ -125,15 +131,6 @@ const Game = () => {
       setMyBoard(init_state.my_board);
     };
   }, [state]);
-
-  //to_move effect
-  // useEffect(() => {
-  //   const { to_move } = state;
-  //   setToMove(to_move);
-  //   return () => {
-  //     setToMove(null);
-  //   };
-  // }, [state]);
 
   //last_move
   useEffect(() => {
@@ -221,7 +218,20 @@ const Game = () => {
   };
 
   function handleAcceptChallege() {
-    post('/challenge/accept').then(res => console.log(res));
+    post('/challenge/accept').then(res => {
+      setNoGame(false);
+      setShowModal(false);
+      handlefetchAll();
+    });
+  }
+
+  function receiveChallenge(data) {
+    setShowModal(true);
+    setChallenge(data);
+  }
+
+  function handleChallengeAccepted() {
+    handlefetchAll();
   }
 
   function placePiece(x, y, set_to_place) {
@@ -237,8 +247,8 @@ const Game = () => {
       };
       sendPiecePlace(body);
     } else {
-      if (board[y][x].piece_id) {
-        const piece = board[y][x];
+      if (game.board[y][x].piece_id) {
+        const piece = game.board[y][x];
         removePiecePlace({ piece_id: piece.piece_id });
       }
     }
@@ -246,31 +256,32 @@ const Game = () => {
 
   let body = {};
   function moveMyPiece(tile) {
-    setToMove(to_move);
+    if (tile.piece_id) {
+      setToMove(tile);
+    }
 
     let key_length = Object.keys(body).length;
-    if (tile.piece_id && key_length === 0 && tile.piece.color) {
+
+    if (to_move && !tile.piece_id) {
+      console.log('here');
       body = {
-        ...body,
-        ox: tile.x,
-        oy: tile.y,
-      };
-    }
-    if (key_length === 2 && !tile.piece.color) {
-      body = {
-        ...body,
+        // ...body,
+        ox: to_move.x,
+        oy: to_move.y,
         nx: tile.x,
         ny: tile.y,
       };
       key_length = Object.keys(body).length;
-    }
-    if (!tile.piece_id) {
-      if (body.ox) {
+    } else if (to_move && tile.piece_id) {
+      if (tile.piece.color !== board_color && turn === board_color) {
         body = {
-          ...body,
+          // ...body,
+          ox: to_move.x,
+          oy: to_move.y,
           nx: tile.x,
           ny: tile.y,
         };
+        key_length = Object.keys(body).length;
       }
     }
 
@@ -298,27 +309,27 @@ const Game = () => {
       }, i * 15);
     });
 
-    let removed = [];
-    let updated_board = board.map(row => {
-      return row.map(tile => {
-        if (tile.piece_id) {
-          if (tile.piece.color === my_board.color) {
-            removed.push(tile.piece);
-            tile.piece = {};
-            tile.piece_id = undefined;
-          }
-        } else {
-          tile.piece = {};
-        }
+    // let removed = [];
+    // let updated_board = board.map(row => {
+    //   return row.map(tile => {
+    //     if (tile.piece_id) {
+    //       if (tile.piece.color === my_board.color) {
+    //         removed.push(tile.piece);
+    //         tile.piece = {};
+    //         tile.piece_id = undefined;
+    //       }
+    //     } else {
+    //       tile.piece = {};
+    //     }
 
-        return tile;
-      });
-    });
+    //     return tile;
+    //   });
+    // });
 
-    await dispatch({
-      type: 'CLEAR_SETUP',
-      payload: { placed, board: updated_board },
-    });
+    // await dispatch({
+    //   type: 'CLEAR_SETUP',
+    //   payload: { placed, board: updated_board },
+    // });
   }
 
   function handleRandomSetup() {
@@ -346,8 +357,8 @@ const Game = () => {
   }
 
   function handleReady(data) {
-    let user = data.id === my_board.id ? my_board : opponent_board;
-    user.ready = 1;
+    handlefetchAll();
+    // dispatch({ type: 'UPDATE_MY_BOARD', payload: { ready: 1 } });
   }
 
   function getPieceColor(col = { piece: {} }) {
@@ -405,7 +416,6 @@ const Game = () => {
   }
 
   const handleMove = res => {
-    console.log('socket:move', res);
     let data = res.data ? res.data : res;
 
     socket_board[data.oy][data.ox].piece_id = undefined;
@@ -452,205 +462,232 @@ const Game = () => {
     return last_move.ox === col.x && last_move.oy === col.y;
   };
 
+  const surrender = () => {
+    post('/game/surrender').then(res => {
+      handlefetchAll();
+    });
+  };
+
+  const receiveEndGame = data => {
+    console.log('game over', data);
+    setShowWinner(true);
+    setWinner(data);
+  };
+
+  const endGame = () => {
+    setShowWinner(false);
+    handlefetchAll();
+  };
+
   return (
     <Fragment>
-      {/* Socket */}
+      {/* socket */}
       <Event event="game" handler={handleStartGame}></Event>
+      <Event event="game_end" handler={receiveEndGame}></Event>
       <Event event="new_user" handler={getNewUser}></Event>
-      <Event event="new_challenge" handler={handleAcceptChallege}></Event>
+      <Event event="new_challenge" handler={receiveChallenge}></Event>
+      <Event
+        event="challenge_accepted"
+        handler={handleChallengeAccepted}
+      ></Event>
       <Event event="piece_placed" handler={updatePiecePlace}></Event>
       <Event event="piece_unplaced" handler={removePiece}></Event>
       <Event event="ready" handler={handleReady}></Event>
       <Event event="move" handler={handleMove}></Event>
       <Event event="chat" handler={handleUpdateChat}></Event>
 
-      <h4 className="text-center">The Game of the Generals</h4>
+      {/* game */}
       <FlexContainer>
-        <Col>
-          {status === 'setup' ? (
-            <>
-              <Button variant="warning" onClick={() => sendStatusReady()}>
-                I am ready
-              </Button>
-              <Button onClick={() => handleRandomSetup()}>Random Setup</Button>
-              <Button onClick={() => handleClearSetUp()}>Clear</Button>
-            </>
-          ) : (
-            ''
-          )}
-          <FallenComrades
-            pieces={opponent_graveyard}
-            color={opponent_piece_color}
-            showIcon={false}
-          />
-          <br />
-          <Table>
-            <tbody>
+        {!no_game && status === 'ongoing' && (
+          <Col>
+            <Alert variant="warning">
+              <h4 className="text-center">
+                {turn ? `${player_turn} turn` : ''}
+              </h4>
+            </Alert>
+          </Col>
+        )}
+      </FlexContainer>
+
+      {no_game && (
+        <OnlineUsers onlineUsers={online_users} challengeUser={challengeUser} />
+      )}
+
+      {!no_game && (
+        <FlexContainer>
+          <Col sm={12}>
+            <Card>
               {board.map((row, i) => (
-                <tr key={i} className={i === 4 ? 'space-between' : ''}>
+                <GridContainer nowrap="nowrap" key={i} border>
                   {row.map(col => (
-                    <td
-                      key={`${col.x}, ${col.y} `}
+                    <div
                       className={
                         getBoardColor(col)
                           ? board_color
                           : `${opponent_board.color}`
                       }
+                      key={`${col.x}, ${col.y}`}
                     >
-                      {status === 'setup' ? (
-                        <Piece
-                          onClick={() => placePiece(col.x, col.y)}
-                          className={
-                            getBoardColor(col)
-                              ? JSON.stringify(col.piece) ===
-                                JSON.stringify(to_place)
-                                ? 'selected'
-                                : board_color
-                              : `${opponent_board.color}`
-                          }
-                        >
-                          {col.piece_id ? (
-                            col.piece.id ? (
-                              <div className={`${col.piece.color}`}>
-                                {col.piece.icons &&
-                                  col.piece.icons.map((icon, i) => (
-                                    <i key={i} className={icon}></i>
-                                  ))}
-                                <p className="small">{col.piece.name}</p>
-                              </div>
-                            ) : (
-                              <span>&#x25cf;</span>
-                            )
-                          ) : (
-                            <span className={`${getPieceColor(col)}-text`}>
-                              {`${col.x}, ${col.y}`}
-                            </span>
-                          )}
-                        </Piece>
-                      ) : //ongoing
-                      col.piece_id ? (
-                        col.piece.id ? (
-                          <Piece
-                            disabled={turn !== board_color}
-                            onClick={() => moveMyPiece(col)}
-                            className={getPieceColor(col)}
-                          >
-                            {col.piece.icons &&
-                              col.piece.icons.map((icon, i) => (
-                                <i key={i} className={icon}></i>
-                              ))}
-                            <p className="small">{col.piece.name}</p>
-                          </Piece>
-                        ) : (
-                          <Piece
-                            onClick={() => moveMyPiece(col)}
-                            className={getPieceColor(col)}
-                          >
-                            &#x25cf;
-                          </Piece>
-                        )
-                      ) : checkLastMove(col) ? (
-                        <Piece
-                          onClick={() => moveMyPiece(col)}
-                          className="last-move"
-                        >
-                          <i className={getLastMoveDirection()}></i>
-                          {/* <i>
-                            {col.x}, {col.y}
-                          </i> */}
-                        </Piece>
-                      ) : (
-                        <TransparentBtn onClick={() => moveMyPiece(col)}>
-                          {/* <span>{`${col.x}, ${col.y}`}</span> */}
-                        </TransparentBtn>
+                      {status === 'ongoing' && (
+                        <Ongoing
+                          turn={turn}
+                          board_color={board_color}
+                          col={col}
+                          moveMyPiece={moveMyPiece}
+                          getPieceColor={getPieceColor}
+                          checkLastMove={checkLastMove}
+                          getLastMoveDirection={getLastMoveDirection}
+                        />
                       )}
-                    </td>
+
+                      {status === 'setup' && (
+                        <Setup
+                          placePiece={placePiece}
+                          getBoardColor={getBoardColor}
+                          col={col}
+                          toPlace={to_place}
+                          boardColor={board_color}
+                          opponentBoard={opponent_board}
+                          getPieceColor={getPieceColor}
+                        />
+                      )}
+                    </div>
                   ))}
-                </tr>
+                </GridContainer>
               ))}
-            </tbody>
-          </Table>
-          <br />
-          <FallenComrades
-            pieces={my_graveyard}
-            color={board_color}
-            showIcon={true}
-          />
-        </Col>
-      </FlexContainer>
-      <br />
+            </Card>
+          </Col>
+        </FlexContainer>
+      )}
       <FlexContainer>
-        <Col>
-          <PieceContainer>
-            {unplaced_pieces.map(piece => (
-              <Piece
-                key={piece.id}
-                className={
-                  JSON.stringify(piece) === JSON.stringify(to_place)
-                    ? 'selected'
-                    : board_color
-                }
-                onClick={() => handleSetToPlace(piece)}
-              >
-                {piece.icons.map((icon, i) => (
-                  <i key={i} className={icon}></i>
-                ))}
-                <p className="small">{piece.name}</p>
-              </Piece>
-            ))}
-          </PieceContainer>
-        </Col>
-      </FlexContainer>
-      <section className="text-center">
-        {no_game ? (
-          ''
-        ) : (
-          <>
-            <h4>
-              {opponent_board.ready === 1 && status === 'setup'
-                ? `${opponent_board.name.toUpperCase()} is ready`
-                : `Playing against ${opponent_board.name.toUpperCase()} `}
-              {status !== 'setup' ? <p>{`${turn}'s turn`}</p> : ''}
-            </h4>
-          </>
-        )}
-      </section>
-      <FlexContainer>
-        <Col md={4} className="float-right">
+        <Col sm={5}>
           <Card>
-            <StyledPadded>
-              Online Players
-              <ListGroup>
-                {online_users.length > 0 ? (
-                  online_users.map(user => (
-                    <ListGroup.Item key={user.id}>
-                      {user.name}
-                      {user.status === '~' || user.status === 'setup' ? (
-                        <Button
-                          size="sm"
-                          className="float-right"
-                          variant="info"
-                          onClick={() => challengeUser(user)}
-                        >
-                          Challenge
-                        </Button>
-                      ) : (
-                        ''
-                      )}
-                    </ListGroup.Item>
-                  ))
-                ) : (
-                  <ListGroup.Item>No online users found </ListGroup.Item>
+            <Card.Header className={board_color}>
+              You
+              {!no_game && status === 'ongoing' && (
+                <Button
+                  className="float-right"
+                  variant="danger"
+                  size="sm"
+                  onClick={surrender}
+                >
+                  Surrender
+                </Button>
+              )}
+              {status === 'setup' ? (
+                <ButtonGroup className="float-right">
+                  {!my_board.ready && my_board.placed_pieces.length === 21 && (
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={() => handleClearSetUp()}
+                    >
+                      Clear
+                    </Button>
+                  )}
+                  {my_board.placed_pieces.length < 21 && (
+                    <Button
+                      variant="info"
+                      size="sm"
+                      onClick={() => handleRandomSetup()}
+                    >
+                      Random Setup
+                    </Button>
+                  )}
+                </ButtonGroup>
+              ) : (
+                ''
+              )}
+            </Card.Header>
+            <Card.Body>
+              {my_board.ready === 1 && status !== 'ongoing' && <h5>ready</h5>}
+              {!no_game && status === 'ongoing' && (
+                <FallenComrades
+                  pieces={my_graveyard}
+                  color={board_color}
+                  showIcon={true}
+                />
+              )}
+              {status === 'setup' && (
+                <FlexContainer nowrap="wrap">
+                  {unplaced_pieces.map(piece => (
+                    <div key={piece.id}>
+                      <Piece
+                        className={
+                          JSON.stringify(piece) === JSON.stringify(to_place)
+                            ? 'selected'
+                            : board_color
+                        }
+                        onClick={() => handleSetToPlace(piece)}
+                      >
+                        {piece.icons.map((icon, i) => (
+                          <i key={i} className={icon}></i>
+                        ))}
+                        <p className="small">{piece.name}</p>
+                      </Piece>
+                    </div>
+                  ))}
+                </FlexContainer>
+              )}
+              {!no_game &&
+                status !== 'ongoing' &&
+                my_board.ready === 0 &&
+                unplaced_pieces.length === 0 && (
+                  <div className="text-center">
+                    <Button variant="warning" onClick={() => sendStatusReady()}>
+                      I am ready
+                    </Button>
+                  </div>
                 )}
-              </ListGroup>
-            </StyledPadded>
+
+              {no_game && <span>No game found</span>}
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col>
+          <h4 className="text-center">vs</h4>
+        </Col>
+        {/* opponent */}
+        <Col sm={5}>
+          <Card>
+            <Card.Header className={opponent_piece_color}>
+              {opponent_board.name || 'No opponent'}
+            </Card.Header>
+            <Card.Body>
+              {!no_game && status === 'ongoing' && (
+                <FallenComrades
+                  pieces={opponent_graveyard}
+                  color={opponent_piece_color}
+                  showIcon={false}
+                />
+              )}
+              {status === 'setup' && opponent_board.ready === 0 && (
+                <h5>setup</h5>
+              )}
+              {status === 'setup' && opponent_board.ready === 1 && (
+                <h5>ready</h5>
+              )}
+              {no_game && (
+                <Card.Body>
+                  <span>No game found</span>
+                </Card.Body>
+              )}
+            </Card.Body>
           </Card>
         </Col>
       </FlexContainer>
-
       <Chat chat={chat} />
+      <br />
+      <br />
+      <AcceptChallenge
+        show={showModal}
+        data={challenge}
+        accept={handleAcceptChallege}
+        decline={setShowModal}
+      />
+      <GameEnd show={showWinner} data={winner} close={endGame} />
     </Fragment>
   );
 };
 
-export default Game;
+export default MainBoard;
